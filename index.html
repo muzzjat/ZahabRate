@@ -1,85 +1,83 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
-    <title>ZAHAB RATE | Pro Calculator</title>
+    <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .card { background: #2c3e50; color: white; padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 10px; border: 1px solid #444; text-align: center; }
-        th { background: #34495e; }
-        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; box-sizing: border-box; }
-        .total-row { font-size: 22px; font-weight: bold; color: #d4af37; text-align: center; padding: 15px; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; transition: 0.3s; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
+        
+        /* الألوان المميزة للجداول */
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .gold-calc { background: #2c3e50; } /* حاسبة الذهب */
+        .live-gold { background: #d4af37; } /* سعر الذهب اللحظي */
+        .crypto { background: #8e44ad; }    /* العملات الرقمية */
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>حاسبة الذهب الاحترافية - Gold Calculator</h2>
-    
-    <table>
-        <tr>
-            <th>العيار</th>
-            <th>الوزن (جرام)</th>
-            <th>المصنعية %</th>
-            <th>الضريبة %</th>
-        </tr>
-        <tr>
-            <td>
-                <select id="karat" onchange="calcGold()">
-                    <option value="24">24</option>
-                    <option value="22">22</option>
-                    <option value="21" selected>21</option>
-                    <option value="18">18</option>
-                </select>
-            </td>
-            <td>
-                <input type="number" id="grams" value="1" min="0.01" step="0.1" oninput="calcGold()">
-            </td>
-            <td>
-                <select id="labor" onchange="calcGold()"></select>
-            </td>
-            <td>
-                <select id="tax" onchange="calcGold()"></select>
-            </td>
-        </tr>
-    </table>
+<div class="header">
+    <h1 id="title">ZAHAB RATE</h1>
+    <select id="lang" onchange="changeLanguage()" style="width: 150px;">
+        <option value="ar">العربية (Arabic)</option>
+        <option value="en">English</option>
+    </select>
+</div>
 
-    <div class="total-row" id="goldResult">الإجمالي: 0.00 AED</div>
+<div class="grid">
+    <div class="card gold-calc">
+        <h2 data-en="Gold Calculator" data-ar="حاسبة الذهب">حاسبة الذهب</h2>
+        <table>
+            <tr><th data-en="Karat" data-ar="العيار">العيار</th><th data-en="Weight" data-ar="الوزن">الوزن</th><th data-en="Labor" data-ar="المصنعية">المصنعية</th><th data-en="Tax" data-ar="الضريبة">الضريبة</th></tr>
+            <tr>
+                <td><select id="karat"><option>24</option><option>21</option></select></td>
+                <td><input type="number" value="1"></td>
+                <td><select id="labor"></select></td>
+                <td><select id="tax"></select></td>
+            </tr>
+        </table>
+        <h3 id="result">الإجمالي: 0.00 AED</h3>
+    </div>
+
+    <div class="card live-gold">
+        <h2 data-en="Live Gold Rate" data-ar="سعر الذهب اللحظي">سعر الذهب اللحظي</h2>
+        <table>
+            <tr><th>24K</th><th>21K</th><th>18K</th></tr>
+            <tr><td>310 AED</td><td>275 AED</td><td>235 AED</td></tr>
+        </table>
+    </div>
+
+    <div class="card crypto">
+        <h2 data-en="Crypto Market" data-ar="العملات الرقمية">العملات الرقمية</h2>
+        <table>
+            <tr><th>BTC</th><th>ETH</th><th>SOL</th></tr>
+            <tr><td>60,000$</td><td>3,300$</td><td>145$</td></tr>
+        </table>
+    </div>
 </div>
 
 <script>
-    function initSelectors() {
-        let laborSelect = document.getElementById('labor');
-        for(let i=5; i<=50; i+=5) { laborSelect.innerHTML += `<option value="${i}">${i}%</option>`; }
-        
-        let taxSelect = document.getElementById('tax');
-        for(let i=5; i<=25; i+=5) { taxSelect.innerHTML += `<option value="${i}">${i}%</option>`; }
+    function populate() {
+        let l = document.getElementById('labor');
+        for(let i=5; i<=50; i+=5) l.innerHTML += `<option>${i}%</option>`;
+        let t = document.getElementById('tax');
+        for(let i=5; i<=25; i+=5) t.innerHTML += `<option>${i}%</option>`;
     }
 
-    function calcGold() {
-        let g = parseFloat(document.getElementById('grams').value);
-        // منع القيم السالبة
-        if (g < 0) { document.getElementById('grams').value = 0; g = 0; }
-        
-        let k = parseInt(document.getElementById('karat').value);
-        let l = parseFloat(document.getElementById('labor').value) || 0;
-        let t = parseFloat(document.getElementById('tax').value) || 0;
-        
-        let basePrice = (k / 24) * 300; 
-        let rawPrice = g * basePrice;
-        let withLabor = rawPrice + (rawPrice * (l / 100));
-        let total = withLabor + (withLabor * (t / 100));
-        
-        document.getElementById('goldResult').innerText = "الإجمالي: " + total.toFixed(2) + " AED";
+    function changeLanguage() {
+        let lang = document.getElementById('lang').value;
+        document.getElementById('htmlTag').dir = (lang === 'ar') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-ar]').forEach(el => {
+            el.innerText = el.getAttribute('data-' + lang);
+        });
     }
 
-    window.onload = function() {
-        initSelectors();
-        calcGold();
-    };
+    window.onload = populate;
 </script>
-
 </body>
 </html>
