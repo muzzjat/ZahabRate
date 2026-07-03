@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZahabRate is your global financial hub for real-time gold prices and currency exchange rates. Access smart calculators for gold and currencies across all regions.">
+    <title>ZAHAB RATE | مركزك المالي العالمي</title>
+    <style>
+        :root { --gold: #d4af37; --dark: #2c3e50; --light: #f4f4f4; }
+        body { font-family: sans-serif; background: var(--light); margin: 0; padding: 0; }
+        header { background: #fff; padding: 20px; text-align: center; border-bottom: 4px solid var(--gold); }
+        .logo { font-size: 28px; font-weight: bold; color: var(--gold); }
+        
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .controls { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        
+        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        select, input { padding: 10px; width: 100%; max-width: 300px; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">ZAHAB RATE</div>
+</header>
+
+<div class="container">
+    <div class="controls">
+        <label>اختر الدولة لمشاهدة أسعارها: </label>
+        <select id="country" onchange="updateData()">
+            <option value="UAE">الإمارات (AED)</option>
+            <option value="SA">السعودية (SAR)</option>
+            <option value="EG">مصر (EGP)</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h3 id="marketTitle">سوق الإمارات</h3>
+        <p id="marketStatus">جاري عرض الأسعار المحدثة...</p>
+        <table>
+            <thead><tr><th>العملة</th><th>شراء</th><th>بيع</th></tr></thead>
+            <tbody id="rateBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // قاعدة بيانات الأسعار حسب الدولة
+    const marketData = {
+        "UAE": { title: "سوق الإمارات", rates: [["USD", "3.66", "3.68"], ["INR", "0.043", "0.045"]] },
+        "SA": { title: "سوق السعودية", rates: [["USD", "3.75", "3.76"], ["EGP", "0.078", "0.082"]] },
+        "EG": { title: "سوق مصر", rates: [["USD", "47.50", "48.00"], ["EUR", "51.00", "52.00"]] }
+    };
+
+    function updateData() {
+        const country = document.getElementById('country').value;
+        const data = marketData[country];
+        document.getElementById('marketTitle').innerText = data.title;
+        const body = document.getElementById('rateBody');
+        body.innerHTML = data.rates.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+    }
+
+    // تشغيل عند التحميل
+    updateData();
+</script>
+
+</body>
+</html>
