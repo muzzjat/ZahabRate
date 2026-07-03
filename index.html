@@ -54,16 +54,42 @@
 </div>
 
 <script>
+    // تهيئة القوائم
     const labor = document.getElementById('labor');
     const tax = document.getElementById('tax');
     for(let i=5; i<=50; i+=5) labor.innerHTML += `<option value="${i/100}">${i}%</option>`;
     for(let i=5; i<=25; i+=5) tax.innerHTML += `<option value="${i/100}">${i}%</option>`;
 
-    let coins = {'Bitcoin': 60000, 'Ethereum': 3300, 'Solana': 150, 'XRP': 0.5, 'Tether': 1, 'BNB': 500, 'Dogecoin': 0.1};
-    let select = document.getElementById('cryptoSelect');
-    select.innerHTML = Object.keys(coins).map(c => `<option value="${coins[c]}">${c}</option>`).join('');
+    // دالة لجلب الأسعار لحظياً
+    async function fetchLivePrices() {
+        try {
+            // 1. جلب سعر الذهب العالمي (تحويله لـ AED وإضافة هامش 5%)
+            let resGold = await fetch('https://api.metals.live/v1/spot/gold');
+            let dataGold = await resGold.json();
+            let price24 = (dataGold[0].price / 31.1035) * 3.67 * 1.05; 
+            
+            document.getElementById('p24').innerText = price24.toFixed(2);
+            document.getElementById('p22').innerText = (price24 * 22/24).toFixed(2);
+            document.getElementById('p21').innerText = (price24 * 21/24).toFixed(2);
+            document.getElementById('p18').innerText = (price24 * 18/24).toFixed(2);
+
+            // 2. جلب أسعار العملات الرقمية
+            let resCrypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,ripple,tether,binancecoin,dogecoin&vs_currencies=usd');
+            let dataCrypto = await resCrypto.json();
+            
+            let select = document.getElementById('cryptoSelect');
+            let currentVal = select.value; // حفظ القيمة المختارة قبل التحديث
+            select.innerHTML = Object.keys(dataCrypto).map(c => 
+                `<option value="${dataCrypto[c].usd}">${c.toUpperCase()}</option>`).join('');
+            
+            calc(); calcCrypto();
+        } catch(err) {
+            console.error("خطأ في جلب البيانات:", err);
+        }
+    }
 
     function calc() {
+        // نستخدم القيم الموجودة في الجدول المحدث تلقائياً
         let karat = document.getElementById('kSelect').value;
         let price = parseFloat(document.getElementById('p'+karat).innerText);
         let g = parseFloat(document.getElementById('grams').value) || 0;
@@ -76,21 +102,20 @@
     function calcCrypto() {
         let amount = parseFloat(document.getElementById('cryptoAmount').value) || 0;
         let price = parseFloat(document.getElementById('cryptoSelect').value);
-        let total = amount * price;
-        document.getElementById('cryptoResult').innerText = "القيمة: " + total.toFixed(2) + " USD/USDT";
+        document.getElementById('cryptoResult').innerText = "القيمة: " + (amount * price).toFixed(2) + " USD/USDT";
     }
 
     function changeLanguage() {
         let l = document.getElementById('lang').value;
         document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
         document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
-        
-        // تحديث Placeholder للحقل
         let input = document.getElementById('cryptoAmount');
         input.placeholder = input.getAttribute('data-' + l + '-placeholder');
     }
 
-    window.onload = () => { calc(); calcCrypto(); };
+    // تشغيل التحديث عند التحميل وكل دقيقة
+    window.onload = () => { fetchLivePrices(); calc(); calcCrypto(); };
+    setInterval(fetchLivePrices, 60000); 
 </script>
 </body>
 </html>
