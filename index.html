@@ -10,7 +10,7 @@
         .gold-market { background: #d4af37; } .gold-calc { background: #2c3e50; } .crypto { background: #8e44ad; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; }
+        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -46,12 +46,10 @@
     </div>
 
     <div class="card crypto">
-        <h2 data-ar="العملات الرقمية" data-en="Crypto Market">العملات الرقمية</h2>
+        <h2 data-ar="حاسبة العملات الرقمية" data-en="Crypto Calculator">حاسبة العملات الرقمية</h2>
+        <input type="number" id="cryptoAmount" placeholder="الكمية التي تملكها" oninput="calcCrypto()">
         <select id="cryptoSelect" oninput="calcCrypto()"></select>
-        <select id="currencyTarget" oninput="calcCrypto()">
-            <option value="1">USD</option><option value="3.67">AED</option><option value="3.75">SAR</option><option value="0.92">EUR</option>
-        </select>
-        <h3 id="cryptoResult">النتيجة: 0.00</h3>
+        <h3 id="cryptoResult">القيمة بالدولار (USD/USDT): 0.00</h3>
     </div>
 </div>
 
@@ -62,13 +60,10 @@
     for(let i=5; i<=50; i+=5) labor.innerHTML += `<option value="${i/100}">${i}%</option>`;
     for(let i=5; i<=25; i+=5) tax.innerHTML += `<option value="${i/100}">${i}%</option>`;
 
-    async function loadData() {
-        // العملات الرقمية الافتراضية للظهور فوراً
-        let coins = {'bitcoin': 60000, 'ethereum': 3300, 'solana': 150, 'ripple': 0.5, 'tether': 1, 'binancecoin': 500, 'dogecoin': 0.1};
-        let select = document.getElementById('cryptoSelect');
-        select.innerHTML = Object.keys(coins).map(c => `<option value="${coins[c]}">${c.toUpperCase()}</option>`).join('');
-        calc(); calcCrypto();
-    }
+    // بيانات العملات الرقمية
+    let coins = {'Bitcoin': 60000, 'Ethereum': 3300, 'Solana': 150, 'XRP': 0.5, 'Tether': 1, 'BNB': 500, 'Dogecoin': 0.1};
+    let select = document.getElementById('cryptoSelect');
+    select.innerHTML = Object.keys(coins).map(c => `<option value="${coins[c]}">${c}</option>`).join('');
 
     function calc() {
         let karat = document.getElementById('kSelect').value;
@@ -81,21 +76,19 @@
     }
 
     function calcCrypto() {
-        let p = document.getElementById('cryptoSelect').value;
-        let t = document.getElementById('currencyTarget').value;
-        document.getElementById('cryptoResult').innerText = "النتيجة: " + (p * t).toFixed(2);
+        let amount = parseFloat(document.getElementById('cryptoAmount').value) || 0;
+        let price = parseFloat(document.getElementById('cryptoSelect').value);
+        let total = amount * price;
+        document.getElementById('cryptoResult').innerText = "القيمة: " + total.toFixed(2) + " USD/USDT";
     }
 
     function changeLanguage() {
         let l = document.getElementById('lang').value;
         document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
         document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
-        // ترجمة رؤوس الجدول يدوياً
-        let headers = document.querySelectorAll('th');
-        headers.forEach(h => { if(h.getAttribute('data-'+l)) h.innerText = h.getAttribute('data-'+l); });
     }
 
-    window.onload = loadData;
+    window.onload = () => { calc(); calcCrypto(); };
 </script>
 </body>
 </html>
