@@ -45,10 +45,7 @@
         <h2 data-ar="حاسبة العملات الرقمية" data-en="Crypto Calculator">حاسبة العملات الرقمية</h2>
         <input type="number" id="cryptoAmount" data-ar-placeholder="الكمية" data-en-placeholder="Amount" placeholder="الكمية" oninput="calcCrypto()">
         <select id="cryptoSelect" onchange="calcCrypto()">
-            <option value="65000">Bitcoin (BTC)</option><option value="3500">Ethereum (ETH)</option><option value="1">USDT</option>
-            <option value="0.5">XRP</option><option value="150">Solana (SOL)</option><option value="500">BNB</option>
-            <option value="0.1">Dogecoin</option><option value="400">Cardano (ADA)</option><option value="0.05">Shiba Inu</option><option value="120">AVAX</option>
-        </select>
+            </select>
         <select id="currencyTarget" onchange="calcCrypto()">
             <option value="1">USD / USDT</option><option value="3.67">AED</option><option value="3.75">SAR</option>
             <option value="0.92">EUR</option><option value="48.5">EGP</option><option value="83.5">INR</option><option value="56.5">PHP</option>
@@ -58,12 +55,24 @@
 </div>
 
 <script>
-    // تهيئة المصنعية والضريبة
+    // 1. تعبئة قائمة المصنعية والضريبة
     const labor = document.getElementById('labor');
     const tax = document.getElementById('tax');
-    [5,10,15,20,25,30,35,40,45,50,55,60,65].forEach(val => labor.innerHTML += `<option value="${val/100}">%${val}</option>`);
+    [5,10,15,20,25,30,35,40,45,50,55,60,65].forEach(val => labor.innerHTML += `<option value="${val/100}">${val}%</option>`);
     [0,5,10,15,20,25,30].forEach(val => tax.innerHTML += `<option value="${val/100}">${val}%</option>`);
 
+    // 2. تعبئة قائمة العملات الرقمية (10 عملات)
+    const cryptoData = [
+        {name: "Bitcoin (BTC)", val: 65000}, {name: "Ethereum (ETH)", val: 3500},
+        {name: "USDT", val: 1}, {name: "XRP", val: 0.5},
+        {name: "Solana (SOL)", val: 150}, {name: "BNB", val: 500},
+        {name: "Dogecoin", val: 0.1}, {name: "Cardano (ADA)", val: 0.4},
+        {name: "Shiba Inu", val: 0.00002}, {name: "Avalanche (AVAX)", val: 30}
+    ];
+    const cryptoSelect = document.getElementById('cryptoSelect');
+    cryptoData.forEach(c => cryptoSelect.innerHTML += `<option value="${c.val}">${c.name}</option>`);
+
+    // وظائف الحساب والترجمة
     function changeLanguage() {
         let l = document.getElementById('lang').value;
         document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
