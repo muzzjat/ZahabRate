@@ -1,55 +1,110 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
-    <title>ZAHAB RATE Live</title>
+    <title>ZAHAB RATE Dashboard</title>
     <style>
         body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .live-gold { background: #d4af37; }
-        .crypto { background: #8e44ad; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .gold-market { background: #d4af37; } .gold-calc { background: #2c3e50; } .crypto { background: #8e44ad; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; }
     </style>
 </head>
 <body>
 
+<div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <h1>ZAHAB RATE</h1>
+    <select id="lang" onchange="changeLanguage()">
+        <option value="ar">العربية</option><option value="en">English</option>
+    </select>
+</div>
+
 <div class="grid">
-    <div class="card live-gold">
-        <h2>أسعار الذهب اللحظية (USD)</h2>
-        <p id="gold-price">جاري تحميل السعر...</p>
+    <!-- 1. سعر الذهب دبي (Retail) -->
+    <div class="card gold-market">
+        <h2 data-ar="سوق الذهب دبي (Retail)" data-en="Dubai Gold Market">سوق الذهب دبي</h2>
+        <table>
+            <tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr>
+            <tr><td id="p24">-</td><td id="p22">-</td><td id="p21">-</td><td id="p18">-</td></tr>
+        </table>
     </div>
 
+    <!-- 2. حاسبة الذهب -->
+    <div class="card gold-calc">
+        <h2 data-ar="حاسبة الذهب" data-en="Gold Calculator">حاسبة الذهب</h2>
+        <table>
+            <tr><th>العيار</th><th>الوزن</th><th>المصنعية%</th><th>الضريبة%</th></tr>
+            <tr>
+                <td><select id="kSelect" oninput="calc()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select></td>
+                <td><input type="number" id="grams" value="1" oninput="calc()"></td>
+                <td><select id="labor" oninput="calc()"></select></td>
+                <td><select id="tax" oninput="calc()"></select></td>
+            </tr>
+        </table>
+        <h3 id="finalPrice">الإجمالي: 0.00 AED</h3>
+    </div>
+
+    <!-- 3. العملات الرقمية -->
     <div class="card crypto">
-        <h2>العملات الرقمية (USD)</h2>
-        <div id="crypto-prices">جاري تحميل الأسعار...</div>
+        <h2 data-ar="العملات الرقمية" data-en="Crypto Market">العملات الرقمية</h2>
+        <select id="cryptoSelect" onchange="calcCrypto()"></select>
+        <select id="currencyTarget" onchange="calcCrypto()">
+            <option value="1">USD</option><option value="3.67">AED</option><option value="3.75">SAR</option><option value="0.92">EUR</option>
+        </select>
+        <h3 id="cryptoResult">النتيجة: 0.00</h3>
     </div>
 </div>
 
 <script>
-    // 1. جلب أسعار العملات الرقمية من CoinGecko
-    async function fetchCrypto() {
-        try {
-            let res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,ripple,tether,binancecoin,dogecoin&vs_currencies=usd');
-            let data = await res.json();
-            let html = "<ul>";
-            for(let coin in data) {
-                html += `<li>${coin.toUpperCase()}: ${data[coin].usd}$</li>`;
-            }
-            html += "</ul>";
-            document.getElementById('crypto-prices').innerHTML = html;
-        } catch(e) { document.getElementById('crypto-prices').innerText = "خطأ في الاتصال"; }
+    // تهيئة القوائم المنسدلة
+    for(let i=5; i<=50; i+=5) document.getElementById('labor').innerHTML += `<option value="${i/100}">${i}%</option>`;
+    for(let i=5; i<=25; i+=5) document.getElementById('tax').innerHTML += `<option value="${i/100}">${i}%</option>`;
+
+    // جلب الأسعار وتحديثها
+    async function updateData() {
+        // تحديث الذهب
+        let res = await fetch('https://api.metals.live/v1/spot/gold');
+        let data = await res.json();
+        let p24 = (data[0].price / 31.1035 * 3.67 * 1.05); // سعر جرام 24 مع هامش 5%
+        document.getElementById('p24').innerText = p24.toFixed(2);
+        document.getElementById('p22').innerText = (p24 * 22/24).toFixed(2);
+        document.getElementById('p21').innerText = (p24 * 21/24).toFixed(2);
+        document.getElementById('p18').innerText = (p24 * 18/24).toFixed(2);
+
+        // تحديث العملات الرقمية
+        let resC = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,ripple,tether,binancecoin,dogecoin&vs_currencies=usd');
+        let dataC = await resC.json();
+        let select = document.getElementById('cryptoSelect');
+        select.innerHTML = Object.keys(dataC).map(c => `<option value="${dataC[c].usd}">${c.toUpperCase()}</option>`).join('');
+        calcCrypto();
     }
 
-    // 2. جلب سعر الذهب (كمثال مبسط)
-    // ملاحظة: أسعار الذهب تتطلب مفتاح API خاص، هذا السطر يوضح الفكرة فقط
-    async function fetchGold() {
-        document.getElementById('gold-price').innerText = "سعر الذهب العالمي: 2350$ للأونصة (تحديث لحظي)";
+    function calc() {
+        let p = parseFloat(document.getElementById('p' + document.getElementById('kSelect').value.replace('K','')).innerText);
+        let g = parseFloat(document.getElementById('grams').value) || 0;
+        let l = parseFloat(document.getElementById('labor').value) || 0;
+        let t = parseFloat(document.getElementById('tax').value) || 0;
+        let total = (p * g) * (1 + l + t);
+        document.getElementById('finalPrice').innerText = "الإجمالي: " + total.toFixed(2) + " AED";
     }
 
-    fetchCrypto();
-    fetchGold();
-    // التحديث كل 60 ثانية تلقائياً
-    setInterval(fetchCrypto, 60000); 
+    function calcCrypto() {
+        let p = document.getElementById('cryptoSelect').value;
+        let t = document.getElementById('currencyTarget').value;
+        document.getElementById('cryptoResult').innerText = "النتيجة: " + (p * t).toFixed(2);
+    }
+
+    function changeLanguage() {
+        let l = document.getElementById('lang').value;
+        document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
+    }
+
+    updateData();
+    setInterval(updateData, 60000); // تحديث كل دقيقة
 </script>
 </body>
 </html>
