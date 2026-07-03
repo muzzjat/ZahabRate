@@ -4,80 +4,73 @@
     <meta charset="UTF-8">
     <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; transition: 0.3s; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
-        
-        /* الألوان المميزة للجداول */
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; transition: 0.3s; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .gold-calc { background: #2c3e50; } /* حاسبة الذهب */
-        .live-gold { background: #d4af37; } /* سعر الذهب اللحظي */
-        .crypto { background: #8e44ad; }    /* العملات الرقمية */
-        
+        .gold-calc { background: #2c3e50; } 
+        .live-gold { background: #d4af37; } 
+        .crypto { background: #8e44ad; }    
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
         select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1 id="title">ZAHAB RATE</h1>
-    <select id="lang" onchange="changeLanguage()" style="width: 150px;">
-        <option value="ar">العربية (Arabic)</option>
+<div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <h1>ZAHAB RATE</h1>
+    <select id="lang" onchange="changeLanguage()" style="width:120px; padding:5px;">
+        <option value="ar">العربية</option>
         <option value="en">English</option>
     </select>
 </div>
 
 <div class="grid">
-    <div class="card gold-calc">
-        <h2 data-en="Gold Calculator" data-ar="حاسبة الذهب">حاسبة الذهب</h2>
+    <div class="card live-gold">
+        <h2 data-ar="أسعار سوق دبي (Retail)" data-en="Dubai Gold Market (Retail)">أسعار سوق دبي (Retail)</h2>
         <table>
-            <tr><th data-en="Karat" data-ar="العيار">العيار</th><th data-en="Weight" data-ar="الوزن">الوزن</th><th data-en="Labor" data-ar="المصنعية">المصنعية</th><th data-en="Tax" data-ar="الضريبة">الضريبة</th></tr>
-            <tr>
-                <td><select id="karat"><option>24</option><option>21</option></select></td>
-                <td><input type="number" value="1"></td>
-                <td><select id="labor"></select></td>
-                <td><select id="tax"></select></td>
-            </tr>
+            <tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr>
+            <tr><td>325</td><td>302</td><td>288</td><td>248</td></tr>
         </table>
-        <h3 id="result">الإجمالي: 0.00 AED</h3>
     </div>
 
-    <div class="card live-gold">
-        <h2 data-en="Live Gold Rate" data-ar="سعر الذهب اللحظي">سعر الذهب اللحظي</h2>
+    <div class="card gold-calc">
+        <h2 data-ar="حاسبة الذهب" data-en="Gold Calculator">حاسبة الذهب</h2>
         <table>
-            <tr><th>24K</th><th>21K</th><th>18K</th></tr>
-            <tr><td>310 AED</td><td>275 AED</td><td>235 AED</td></tr>
+            <tr><th data-ar="العيار" data-en="Karat">العيار</th><th data-ar="الوزن" data-en="Weight">الوزن</th></tr>
+            <tr>
+                <td><select id="kSelect" oninput="calc()"><option value="325">24K</option><option value="302">22K</option><option value="288">21K</option><option value="248">18K</option></select></td>
+                <td><input type="number" id="grams" value="1" oninput="calc()"></td>
+            </tr>
         </table>
+        <h3 id="finalPrice">الإجمالي: 0.00 AED</h3>
     </div>
 
     <div class="card crypto">
-        <h2 data-en="Crypto Market" data-ar="العملات الرقمية">العملات الرقمية</h2>
-        <table>
-            <tr><th>BTC</th><th>ETH</th><th>SOL</th></tr>
-            <tr><td>60,000$</td><td>3,300$</td><td>145$</td></tr>
-        </table>
+        <h2 data-ar="العملات الرقمية" data-en="Crypto Calculator">العملات الرقمية</h2>
+        <select id="cryptoSelect" oninput="calcCrypto()"><option value="60000">BTC</option><option value="3300">ETH</option><option value="150">SOL</option><option value="0.5">XRP</option><option value="1">USDT</option><option value="500">BNB</option><option value="0.1">DOGE</option></select>
+        <select id="currencyTarget" oninput="calcCrypto()"><option value="1">USD</option><option value="3.67">AED</option><option value="3.75">SAR</option><option value="0.92">EUR</option></select>
+        <h3 id="cryptoResult">النتيجة: 0.00</h3>
     </div>
 </div>
 
 <script>
-    function populate() {
-        let l = document.getElementById('labor');
-        for(let i=5; i<=50; i+=5) l.innerHTML += `<option>${i}%</option>`;
-        let t = document.getElementById('tax');
-        for(let i=5; i<=25; i+=5) t.innerHTML += `<option>${i}%</option>`;
+    function calc() {
+        let p = parseFloat(document.getElementById('kSelect').value);
+        let g = parseFloat(document.getElementById('grams').value) || 0;
+        document.getElementById('finalPrice').innerText = "الإجمالي: " + (p * g).toFixed(2) + " AED";
     }
-
+    function calcCrypto() {
+        let p = document.getElementById('cryptoSelect').value;
+        let t = document.getElementById('currencyTarget').value;
+        document.getElementById('cryptoResult').innerText = "النتيجة: " + (p * t).toFixed(2);
+    }
     function changeLanguage() {
-        let lang = document.getElementById('lang').value;
-        document.getElementById('htmlTag').dir = (lang === 'ar') ? 'rtl' : 'ltr';
-        document.querySelectorAll('[data-ar]').forEach(el => {
-            el.innerText = el.getAttribute('data-' + lang);
-        });
+        let l = document.getElementById('lang').value;
+        document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
     }
-
-    window.onload = populate;
+    window.onload = () => { calc(); calcCrypto(); };
 </script>
 </body>
 </html>
