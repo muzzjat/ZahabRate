@@ -1,44 +1,96 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
-    <title>ZAHAB RATE</title>
+    <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #eee; padding: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ccc; }
-        select, input { width: 100%; padding: 10px; margin: 5px 0; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .gold-market { background: #d4af37; } .gold-calc { background: #2c3e50; } .crypto { background: #27ae60; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>أسعار الذهب (Retail)</h2>
-        <table border="1" style="width:100%; text-align:center;">
+<div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <h1 id="mainTitle">ZAHAB RATE</h1>
+    <select id="lang" onchange="changeLanguage()">
+        <option value="ar">العربية</option><option value="en">English</option>
+    </select>
+</div>
+
+<div class="grid">
+    <div class="card gold-market">
+        <h2 data-ar="سوق الذهب دبي (Retail)" data-en="Dubai Gold Market (Retail)">سوق الذهب دبي (Retail)</h2>
+        <table>
             <tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr>
-            <tr><td>325</td><td>302</td><td>288</td><td>248</td></tr>
+            <tr><td id="p24">325.00</td><td id="p22">302.00</td><td id="p21">288.00</td><td id="p18">248.00</td></tr>
         </table>
     </div>
 
-    <div class="card">
-        <h2>حاسبة الذهب</h2>
-        <input type="number" id="grams" value="1" placeholder="الوزن">
-        <select id="tax">
-            <option value="0">0%</option>
-            <option value="0.05">5%</option>
-        </select>
-        <button onclick="calculate()">احسب الآن</button>
-        <h3 id="result">الإجمالي: 0.00</h3>
+    <div class="card gold-calc">
+        <h2 data-ar="حاسبة الذهب" data-en="Gold Calculator">حاسبة الذهب</h2>
+        <table>
+            <tr><th data-ar="العيار" data-en="Karat">العيار</th><th data-ar="الوزن" data-en="Weight">الوزن</th><th data-ar="المصنعية" data-en="Labor">المصنعية</th><th data-ar="الضريبة" data-en="Tax">الضريبة</th></tr>
+            <tr>
+                <td><select id="kSelect" oninput="calc()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select></td>
+                <td><input type="number" id="grams" value="1" oninput="calc()"></td>
+                <td><select id="labor" oninput="calc()"></select></td>
+                <td><select id="tax" oninput="calc()"></select></td>
+            </tr>
+        </table>
+        <h3 id="finalPrice">الإجمالي: 0.00 AED</h3>
     </div>
 
-    <script>
-        function calculate() {
-            let g = document.getElementById('grams').value;
-            let t = document.getElementById('tax').value;
-            let price = 325; // سعر ثابت للتجربة
-            let total = (price * g) * (1 + parseFloat(t));
-            document.getElementById('result').innerText = "الإجمالي: " + total.toFixed(2);
-            alert("الحسبة: " + total);
-        }
-    </script>
+    <div class="card crypto">
+        <h2 data-ar="حاسبة العملات الرقمية" data-en="Crypto Calculator">حاسبة العملات الرقمية</h2>
+        <input type="number" id="cryptoAmount" data-ar-placeholder="الكمية التي تملكها" data-en-placeholder="Amount you own" placeholder="الكمية التي تملكها" oninput="calcCrypto()">
+        <select id="cryptoSelect" oninput="calcCrypto()"></select>
+        <h3 id="cryptoResult">القيمة: 0.00 USD/USDT</h3>
+    </div>
+</div>
+
+<script>
+    const labor = document.getElementById('labor');
+    const tax = document.getElementById('tax');
+    for(let i=5; i<=50; i+=5) labor.innerHTML += `<option value="${i/100}">${i}%</option>`;
+    for(let i=5; i<=25; i+=5) tax.innerHTML += `<option value="${i/100}">${i}%</option>`;
+
+    let coins = {'Bitcoin': 60000, 'Ethereum': 3300, 'Solana': 150, 'XRP': 0.5, 'Tether': 1, 'BNB': 500, 'Dogecoin': 0.1};
+    let select = document.getElementById('cryptoSelect');
+    select.innerHTML = Object.keys(coins).map(c => `<option value="${coins[c]}">${c}</option>`).join('');
+
+    function calc() {
+        let karat = document.getElementById('kSelect').value;
+        let price = parseFloat(document.getElementById('p'+karat).innerText);
+        let g = parseFloat(document.getElementById('grams').value) || 0;
+        let l = parseFloat(document.getElementById('labor').value) || 0;
+        let t = parseFloat(document.getElementById('tax').value) || 0;
+        let total = (price * g) * (1 + l + t);
+        document.getElementById('finalPrice').innerText = "الإجمالي: " + total.toFixed(2) + " AED";
+    }
+
+    function calcCrypto() {
+        let amount = parseFloat(document.getElementById('cryptoAmount').value) || 0;
+        let price = parseFloat(document.getElementById('cryptoSelect').value);
+        let total = amount * price;
+        document.getElementById('cryptoResult').innerText = "القيمة: " + total.toFixed(2) + " USD/USDT";
+    }
+
+    function changeLanguage() {
+        let l = document.getElementById('lang').value;
+        document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
+        
+        // تحديث Placeholder للحقل
+        let input = document.getElementById('cryptoAmount');
+        input.placeholder = input.getAttribute('data-' + l + '-placeholder');
+    }
+
+    window.onload = () => { calc(); calcCrypto(); };
+</script>
 </body>
 </html>
