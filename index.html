@@ -2,44 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>ZAHAB RATE | منصة الأسعار اللحظية</title>
+    <title>ZAHAB RATE | Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; text-align: center; padding: 20px; }
-        .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .result { font-size: 24px; font-weight: bold; color: #d4af37; margin-top: 20px; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* ألوان الفئات */
+        .gold-market { background: #d4af37; } /* لون الذهب */
+        .gold-calc { background: #2c3e50; }   /* لون حاسبة الذهب */
+        .crypto { background: #8e44ad; }      /* لون العملات الرقمية */
+        
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; }
+        h2 { margin-top: 0; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>ZAHAB RATE</h1>
-    <p>محول الذهب والعملات اللحظي</p>
-    
-    <input type="number" id="amount" placeholder="أدخل المبلغ..." oninput="calculate()">
-    
-    <select id="currency" onchange="calculate()">
-        <option value="3.67">دولار أمريكي (USD)</option>
-        <option value="3.95">يورو (EUR)</option>
-        <option value="0.04">روبية هندية (INR)</option>
-        <option value="250000">بيتكوين (BTC)</option>
-    </select>
+<div class="grid">
+    <div class="card gold-calc">
+        <h2>حاسبة الذهب - Gold Calculator</h2>
+        <input type="number" id="grams" placeholder="الوزن بالجرام (Grams)">
+        <select id="karat">
+            <option value="24">عيار 24</option>
+            <option value="22">عيار 22</option>
+            <option value="21">عيار 21</option>
+            <option value="18">عيار 18</option>
+        </select>
+        <input type="number" id="labor" placeholder="المصنعية (Labor)">
+        <input type="number" id="tax" placeholder="الضريبة % (Tax)">
+        <button onclick="calculateGold()">احسب الإجمالي - Calculate</button>
+        <h3 id="goldResult">الإجمالي: 0</h3>
+    </div>
 
-    <div class="result" id="output">النتيجة ستظهر هنا</div>
+    <div class="card crypto">
+        <h2>العملات الرقمية - Crypto</h2>
+        <p>BTC: 60,000$ | ETH: 3,300$ | SOL: 140$ | XRP: 0.45$</p>
+    </div>
 </div>
 
 <script>
-    function calculate() {
-        const amount = document.getElementById('amount').value;
-        const rate = document.getElementById('currency').value;
-        const output = document.getElementById('output');
+    function calculateGold() {
+        let grams = document.getElementById('grams').value;
+        let karat = document.getElementById('karat').value;
+        let labor = document.getElementById('labor').value;
+        let tax = document.getElementById('tax').value;
         
-        if (amount > 0) {
-            const result = (amount * rate).toFixed(2);
-            output.innerText = "القيمة: " + result + " درهم";
-        } else {
-            output.innerText = "النتيجة ستظهر هنا";
-        }
+        // معادلة مبسطة (يجب ربط سعر الجرام بـ API لاحقاً)
+        let pricePerGram = (karat / 24) * 300; // سعر افتراضي
+        let total = (grams * pricePerGram) + parseFloat(labor);
+        total = total + (total * (tax / 100));
+        
+        document.getElementById('goldResult').innerText = "الإجمالي: " + total.toFixed(2) + " AED";
     }
 </script>
 
