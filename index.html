@@ -7,7 +7,7 @@
         body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .gold-market { background: #d4af37; } .gold-calc { background: #2c3e50; } .crypto { background: #8e44ad; }
+        .gold-market { background: #d4af37; } .gold-calc { background: #2c3e50; } .crypto { background: #27ae60; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
         select, input { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 5px; }
@@ -47,20 +47,18 @@
 
     <div class="card crypto">
         <h2 data-ar="حاسبة العملات الرقمية" data-en="Crypto Calculator">حاسبة العملات الرقمية</h2>
-        <input type="number" id="cryptoAmount" placeholder="الكمية التي تملكها" oninput="calcCrypto()">
+        <input type="number" id="cryptoAmount" data-ar-placeholder="الكمية التي تملكها" data-en-placeholder="Amount you own" placeholder="الكمية التي تملكها" oninput="calcCrypto()">
         <select id="cryptoSelect" oninput="calcCrypto()"></select>
-        <h3 id="cryptoResult">القيمة بالدولار (USD/USDT): 0.00</h3>
+        <h3 id="cryptoResult">القيمة: 0.00 USD/USDT</h3>
     </div>
 </div>
 
 <script>
-    // تهيئة القوائم
     const labor = document.getElementById('labor');
     const tax = document.getElementById('tax');
     for(let i=5; i<=50; i+=5) labor.innerHTML += `<option value="${i/100}">${i}%</option>`;
     for(let i=5; i<=25; i+=5) tax.innerHTML += `<option value="${i/100}">${i}%</option>`;
 
-    // بيانات العملات الرقمية
     let coins = {'Bitcoin': 60000, 'Ethereum': 3300, 'Solana': 150, 'XRP': 0.5, 'Tether': 1, 'BNB': 500, 'Dogecoin': 0.1};
     let select = document.getElementById('cryptoSelect');
     select.innerHTML = Object.keys(coins).map(c => `<option value="${coins[c]}">${c}</option>`).join('');
@@ -86,6 +84,10 @@
         let l = document.getElementById('lang').value;
         document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
         document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
+        
+        // تحديث Placeholder للحقل
+        let input = document.getElementById('cryptoAmount');
+        input.placeholder = input.getAttribute('data-' + l + '-placeholder');
     }
 
     window.onload = () => { calc(); calcCrypto(); };
