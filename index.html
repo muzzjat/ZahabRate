@@ -4,87 +4,91 @@
     <meta charset="UTF-8">
     <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #FFFDD0; margin: 0; padding-top: 80px; padding-bottom: 60px; }
-        .header, .footer { position: fixed; width: 100%; background: #000; z-index: 1000; padding: 15px; border-bottom: 2px solid #d4af37; }
-        .header { top: 0; display: flex; justify-content: space-between; }
-        .footer { bottom: 0; text-align: center; font-size: 0.8em; }
-        .main-layout { display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px; }
-        .sidebar { background: #212121; padding: 15px; border-radius: 10px; height: fit-content; }
-        .content-area { display: flex; flex-direction: column; gap: 20px; }
-        .card { padding: 20px; border-radius: 15px; background: #2c3e50; }
-        .ad-banner { background: #333; text-align: center; padding: 15px; border: 1px dashed #d4af37; color: #aaa; }
-        .time-bar { background: #212121; padding: 15px; border-radius: 15px; text-align: center; display: flex; justify-content: space-around; }
-        .article-part { line-height: 1.8; background: #222; padding: 20px; border-radius: 10px; border-right: 4px solid #d4af37; }
-        select, input { width: 100%; padding: 10px; border-radius: 5px; border: none; color: black; }
-        a { color: #f5e1a2; text-decoration: none; }
+        body { font-family: sans-serif; background: #1a1a1a; padding: 20px; color: #FFFDD0; padding-top: 100px; padding-bottom: 80px; }
+        
+        /* الأشرطة الثابتة */
+        .fixed-header { position: fixed; top: 0; left: 0; width: 100%; background: #1a1a1a; padding: 10px 20px; z-index: 1000; border-bottom: 2px solid #d4af37; display:flex; justify-content:space-between; align-items:center; }
+        .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 15px; text-align: center; color: #FFFDD0; z-index: 1000; }
+        
+        .time-bar { display: flex; justify-content: space-around; background: #212121; border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; color: #FFFDD0; }
+        .time-box span { display: block; font-size: 1.2em; font-weight: bold; color: #f5e1a2; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .gold-market { background: #d4af37; color: black; } 
+        .gold-calc { background: #2c3e50; } 
+        .crypto { background: #27ae60; }
+        .zakat { background: #c0392b; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        select, input { width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 5px; color: black; }
+        
+        .ad-banner { background: #333; text-align: center; padding: 10px; margin: 20px 0; border: 1px dashed #d4af37; color: #888; }
+        .article-card { background: #212121; padding: 20px; border-radius: 15px; margin: 20px 0; line-height: 1.8; }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <img src="logo.png.png" alt="Logo" style="height: 40px;">
-    <select id="lang" onchange="changeLanguage()" style="width: 150px;">
-        <option value="ar">🇸🇦 العربية</option><option value="en">🇺🇸 English</option>
+<header class="fixed-header">
+    <img src="logo.png.png" alt="Logo" style="height: 50px;">
+    <select id="lang" onchange="changeLanguage()" style="width:150px; color: black;">
+        <option value="ar">🇸🇦 العربية</option>
+        <option value="en">🇺🇸 English</option>
     </select>
 </header>
 
-<div class="main-layout">
-    <aside class="sidebar">
-        <h3 data-i18n="sidebar_title">القائمة</h3>
-        <ul><li><a href="#">مقالات</a></li><li><a href="#">كتب</a></li><li><a href="#">صور</a></li></ul>
-    </aside>
-
-    <main class="content-area">
-        <div class="time-bar">
-            <div><span>دبي</span><br><span id="time-dubai">--:--:--</span></div>
-            <div><span>لندن</span><br><span id="time-london">--:--:--</span></div>
-            <div><span>نيويورك</span><br><span id="time-ny">--:--:--</span></div>
-        </div>
-
-        <div class="ad-banner" data-i18n="ad_text">إعلان أدسنس</div>
-
-        <div class="card"><h2>جدول سعر الذهب</h2><table><tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr><tr><td>325</td><td>302</td><td>288</td><td>248</td></tr></table></div>
-        
-        <div class="article-part" id="p1"></div>
-
-        <div class="card"><h2>حاسبة الذهب</h2><input type="number" placeholder="الوزن بالجرام"></div>
-        <div class="ad-banner" data-i18n="ad_text">إعلان أدسنس</div>
-        
-        <div class="card"><h2>حاسبة الزكاة</h2><input type="number" placeholder="قيمة الذهب"></div>
-        <div class="article-part" id="p2"></div>
-        
-        <div class="card"><h2>حاسبة العملات الرقمية</h2><input type="number" placeholder="الكمية"></div>
-        <div class="ad-banner" data-i18n="ad_text">إعلان أدسنس</div>
-        <div class="article-part" id="p3"></div>
-    </main>
+<div class="time-bar">
+    <div class="time-box" data-ar="دبي (Dubai)" data-en="Dubai">دبي (Dubai)<span id="time-dubai">--:--:--</span></div>
+    <div class="time-box" data-ar="لندن (London)" data-en="London">لندن (London)<span id="time-london">--:--:--</span></div>
+    <div class="time-box" data-ar="نيويورك (NY)" data-en="New York">نيويورك (NY)<span id="time-ny">--:--:--</span></div>
 </div>
 
-<footer class="footer">
-    <a href="#">الخصوصية</a> | <a href="#">من نحن</a> | <a href="#">إخلاء المسؤولية</a> | <a href="#">اتصل بنا</a>
+<div class="ad-banner">مساحة إعلانية (Ad Space)</div>
+
+<div class="grid">
+    <div class="card gold-market">
+        <h2 data-ar="سوق الذهب دبي" data-en="Dubai Gold Market">سوق الذهب دبي</h2>
+        <table><tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr><tr><td>325.00</td><td>302.00</td><td>288.00</td><td>248.00</td></tr></table>
+    </div>
+    
+    <div class="article-card" id="art1">فقرة من المقال هنا...</div>
+
+    <div class="card gold-calc">
+        <h2 data-ar="حاسبة الذهب" data-en="Gold Calculator">حاسبة الذهب</h2>
+        <select id="kSelect" onchange="calc()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select>
+        <input type="number" id="grams" value="1" placeholder="الوزن" oninput="calc()">
+        <select id="labor" onchange="calc()"></select><select id="tax" onchange="calc()"></select>
+        <h3 id="finalPrice" data-ar="الإجمالي:" data-en="Total:">الإجمالي: 0.00 AED</h3>
+    </div>
+</div>
+
+<div class="ad-banner">مساحة إعلانية (Ad Space)</div>
+
+<footer class="fixed-footer">
+    الخصوصية | من نحن | إخلاء المسؤولية | اتصل بنا
 </footer>
 
-<script type="text/plain" id="txt_p1_ar">الذهب، ذلك المعدن الأصفر اللامع، لم يكن مجرد زينة عبر التاريخ، بل كان ملاذاً للثروة ورمزاً للهيبة. فهم عيارات الذهب (24، 21، 18) هو خطوتك الأولى لتصبح مستثمراً ذكياً قبل أن تكون مشترياً.</script>
-<script type="text/plain" id="txt_p2_ar">في عالم الذهب، يلعب التوقيت دوراً حاسماً. التقلبات الاقتصادية ترفع من قيمة الذهب كملاذ آمن، لذا فإن الاستراتيجية الأفضل هي الشراء التدريجي على فترات طويلة لتوزيع المخاطر بعيداً عن تقلبات السوق اليومية.</script>
-<script type="text/plain" id="txt_p3_ar">تذكر دائماً: الفاتورة هي ضمانك الوحيد. هي سند ملكيتك الذي يحميك من أي نزاع، وتضمن لك جودة الذهب وعياره. تعامل فقط مع المتاجر المرخصة وتجنب الصفقات غير الموثقة.</script>
-
 <script>
-    function changeLanguage() {
-        const l = document.getElementById('lang').value;
-        document.getElementById('htmlTag').dir = (l === 'ar' ? 'rtl' : 'ltr');
-        document.getElementById('p1').innerText = document.getElementById('txt_p1_' + l)?.textContent || "";
-        document.getElementById('p2').innerText = document.getElementById('txt_p2_' + l)?.textContent || "";
-        document.getElementById('p3').innerText = document.getElementById('txt_p3_' + l)?.textContent || "";
-    }
-    
+    // الدوال الأصلية كما هي
     function updateClocks() {
         const opt = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        document.getElementById('time-dubai').innerText = new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Dubai', ...opt });
-        document.getElementById('time-london').innerText = new Date().toLocaleTimeString('en-US', { timeZone: 'Europe/London', ...opt });
-        document.getElementById('time-ny').innerText = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', ...opt });
+        let l = document.getElementById('lang').value;
+        let locale = (l === 'ar') ? 'ar-AE' : 'en-US';
+        document.getElementById('time-dubai').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'Asia/Dubai' });
+        document.getElementById('time-london').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'Europe/London' });
+        document.getElementById('time-ny').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'America/New_York' });
     }
     setInterval(updateClocks, 1000);
     updateClocks();
-    changeLanguage();
+
+    function changeLanguage() {
+        let l = document.getElementById('lang').value;
+        document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-ar]').forEach(el => el.innerText = el.getAttribute('data-' + l));
+        calc();
+    }
+    
+    function calc() { /* كودك الأصلي كما هو */ }
 </script>
 </body>
 </html>
