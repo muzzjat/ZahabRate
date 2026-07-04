@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #FFFDD0; margin: 0; padding: 20px; padding-bottom: 100px; }
+        body { font-family: sans-serif; background: #1a1a1a; color: #FFFDD0; margin: 0; padding: 20px; padding-bottom: 150px; }
         .main-container { display: grid; grid-template-columns: 3fr 1fr; gap: 20px; }
-        .time-bar { background: #212121; border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; display: flex; justify-content: space-around; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 20px; background: #2c3e50; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: #2c3e50; }
         .gold-market { background: #d4af37; color: black; }
         .sidebar { background: #212121; padding: 20px; border-radius: 15px; border: 1px solid #d4af37; height: fit-content; }
-        .disclaimer { font-size: 0.8em; color: #aaa; margin-top: 15px; line-height: 1.4; }
-        footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; padding: 15px 0; border-top: 1px solid #333; text-align: center; color: #888; z-index: 1000; }
-        footer a { color: #d4af37; text-decoration: none; margin: 0 10px; }
+        footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 15px 0; border-top: 2px solid #d4af37; text-align: center; z-index: 1000; }
+        footer a { color: #d4af37; text-decoration: none; margin: 0 10px; font-weight: bold; }
         select, input { width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 10px; color: black; }
     </style>
 </head>
 <body>
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <a href="#"><img src="logo.png.png" alt="Logo" style="height: 80px; width: auto;"></a>
-    <select id="lang" onchange="changeLanguage()" style="width:150px;">
+    <img src="logo.png.png" alt="Logo" style="height: 80px; width: auto;">
+    <select id="lang" onchange="changeLanguage()" style="width:150px; cursor:pointer;">
         <option value="ar">العربية</option><option value="en">English</option>
         <option value="tl">Tagalog</option><option value="ur">اردو</option>
         <option value="hi">हिन्दी</option><option value="ta">தமிழ்</option>
@@ -29,91 +27,46 @@
     </select>
 </div>
 
-<div class="time-bar">
-    <div>دبي: <span id="time-dubai">--:--:--</span></div>
-    <div>لندن: <span id="time-london">--:--:--</span></div>
-    <div>نيويورك: <span id="time-ny">--:--:--</span></div>
-</div>
-
 <div class="main-container">
-    <div>
-        <div class="grid">
-            <div class="card gold-market">
-                <h2 id="txt_gold_market">سوق الذهب دبي</h2>
-                <table style="width:100%; border-collapse: collapse; text-align:center;">
-                    <tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr>
-                    <tr><td>501.75</td><td>464.50</td><td>445.50</td><td>381.75</td></tr>
-                </table>
-            </div>
-            <div class="card">
-                <h2 id="txt_calc">حاسبة الذهب</h2>
-                <input type="number" id="grams" placeholder="الوزن (جرام)" oninput="calc()">
-                <select id="labor" onchange="calc()"></select>
-                <select id="tax" onchange="calc()"></select>
-                <h3 id="finalPrice">الإجمالي: 0.00 AED</h3>
-                <p id="txt_disclaimer" class="disclaimer">إخلاء مسؤولية: هذا الموقع لا يقدم نصائح استثمارية. الأسعار تقريبية ولأغراض معلوماتية فقط.</p>
-            </div>
-        </div>
+    <div class="grid">
+        <div class="card gold-market"><h2 id="t_gold">سوق الذهب دبي</h2><table><tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr><tr><td>501.75</td><td>464.50</td><td>445.50</td><td>381.75</td></tr></table></div>
+        <div class="card"><h2 id="t_calc">حاسبة الذهب</h2><input type="number" id="grams" placeholder="الوزن" oninput="calc()"><select id="labor"></select><select id="tax"></select><h3 id="res_gold">الإجمالي: 0.00</h3></div>
+        <div class="card"><h2 id="t_crypto">العملات الرقمية</h2><input type="number" id="cryptoAmount" placeholder="الكمية" oninput="calcCrypto()"><select id="cryptoSelect" onchange="calcCrypto()"></select><h3 id="res_crypto">القيمة: 0.00</h3></div>
+        <div class="card"><h2 id="t_zakat">زكاة الذهب</h2><input type="number" id="zakatGrams" placeholder="الوزن" oninput="calcZakat()"><h3 id="res_zakat">الزكاة: 0.00</h3></div>
     </div>
-    <div class="sidebar">
-        <h3 id="txt_contact">تواصل معنا</h3>
-        <p>muzzjat@gmail.com</p>
-    </div>
+    <div class="sidebar"><h3 id="t_contact">اتصل بنا</h3><p>muzzjat@gmail.com</p><p id="t_disclaimer" style="font-size: 0.8em; color: #aaa;">إخلاء مسؤولية: الأسعار استرشادية.</p></div>
 </div>
 
 <footer>
-    <a href="#" id="txt_about">من نحن</a> | 
-    <a href="#" id="txt_privacy">سياسة الخصوصية</a> | 
-    <a href="mailto:muzzjat@gmail.com">Email</a>
-    <p>© 2026 ZAHAB RATE - جميع الحقوق محفوظة</p>
+    <a href="#" id="t_about">من نحن</a> | <a href="#" id="t_privacy">سياسة الخصوصية</a> | <a href="mailto:muzzjat@gmail.com" id="t_contact_link">تواصل معنا ✉️</a>
 </footer>
 
 <script>
-    const tr = {
-        ar: { gold: "سوق الذهب دبي", calc: "حاسبة الذهب", weight: "الوزن (جرام)", labor: "المصنعية", tax: "الضريبة", total: "الإجمالي: ", disc: "إخلاء مسؤولية: هذا الموقع لا يقدم نصائح استثمارية. الأسعار تقريبية ولأغراض معلوماتية فقط.", about: "من نحن", privacy: "سياسة الخصوصية", contact: "تواصل معنا" },
-        en: { gold: "Dubai Gold Market", calc: "Gold Calculator", weight: "Weight (Gram)", labor: "Labor", tax: "Tax", total: "Total: ", disc: "Disclaimer: This site does not provide investment advice. Prices are approximate and for informational purposes only.", about: "About Us", privacy: "Privacy Policy", contact: "Contact Us" }
+    const dict = {
+        ar: {gold: "سوق الذهب دبي", calc: "حاسبة الذهب", crypto: "العملات الرقمية", zakat: "زكاة الذهب", weight: "الوزن", contact: "اتصل بنا", disc: "إخلاء مسؤولية: الأسعار استرشادية.", about: "من نحن", privacy: "سياسة الخصوصية", contact_link: "تواصل معنا"},
+        en: {gold: "Dubai Gold Market", calc: "Gold Calculator", crypto: "Crypto Currency", zakat: "Gold Zakat", weight: "Weight", contact: "Contact Us", disc: "Disclaimer: Prices are approximate.", about: "About Us", privacy: "Privacy Policy", contact_link: "Contact Us"}
     };
 
     function changeLanguage() {
-        let l = document.getElementById('lang').value;
-        let d = tr[l] || tr['en'];
-        document.getElementById('htmlTag').dir = (l === 'ar' || l === 'ur') ? 'rtl' : 'ltr';
-        document.getElementById('txt_gold_market').innerText = d.gold;
-        document.getElementById('txt_calc').innerText = d.calc;
+        let lang = document.getElementById('lang').value;
+        let d = dict[lang] || dict['en'];
+        document.getElementById('t_gold').innerText = d.gold;
+        document.getElementById('t_calc').innerText = d.calc;
+        document.getElementById('t_crypto').innerText = d.crypto;
+        document.getElementById('t_zakat').innerText = d.zakat;
         document.getElementById('grams').placeholder = d.weight;
-        document.getElementById('txt_disclaimer').innerText = d.disc;
-        document.getElementById('txt_about').innerText = d.about;
-        document.getElementById('txt_privacy').innerText = d.privacy;
-        document.getElementById('txt_contact').innerText = d.contact;
-        updateDropdowns(d);
-        calc();
+        document.getElementById('t_contact').innerText = d.contact;
+        document.getElementById('t_disclaimer').innerText = d.disc;
+        document.getElementById('t_about').innerText = d.about;
+        document.getElementById('t_privacy').innerText = d.privacy;
+        document.getElementById('t_contact_link').innerText = d.contact_link;
     }
 
-    function updateDropdowns(d) {
-        const labor = document.getElementById('labor');
-        const tax = document.getElementById('tax');
-        labor.innerHTML = `<option value="0">${d.labor}</option>`;
-        tax.innerHTML = `<option value="0">${d.tax}</option>`;
-        [5,10,15,20,25,30].forEach(v => labor.innerHTML += `<option value="${v/100}">${v}%</option>`);
-        [0,5,10,15,20].forEach(v => tax.innerHTML += `<option value="${v/100}">${v}%</option>`);
-    }
-
-    function calc() {
-        let g = parseFloat(document.getElementById('grams').value) || 0;
-        let lab = parseFloat(document.getElementById('labor').value) || 0;
-        let taxVal = parseFloat(document.getElementById('tax').value) || 0;
-        let total = (501.75 * g) * (1 + lab + taxVal);
-        document.getElementById('finalPrice').innerText = "الإجمالي: " + total.toFixed(2) + " AED";
-    }
-
-    setInterval(() => {
-        const opt = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        document.getElementById('time-dubai').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Dubai' });
-        document.getElementById('time-london').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Europe/London' });
-        document.getElementById('time-ny').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'America/New_York' });
-    }, 1000);
+    function calc() { /* دالة الحساب */ }
+    function calcCrypto() { /* دالة العملات */ }
+    function calcZakat() { /* دالة الزكاة */ }
     
-    updateDropdowns(tr['ar']);
+    changeLanguage();
 </script>
 </body>
 </html>
