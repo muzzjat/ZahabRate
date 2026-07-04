@@ -5,8 +5,6 @@
     <title>ZAHAB RATE Dashboard</title>
     <style>
         body { font-family: sans-serif; background: #1a1a1a; padding: 20px; color: #FFFDD0; }
-        
-        /* الشريط الزمني الجديد */
         .time-bar { 
             display: flex; justify-content: space-around; 
             background: #212121; border: 1px solid #333;
@@ -14,7 +12,6 @@
             text-align: center; color: #FFFDD0;
         }
         .time-box span { display: block; font-size: 1.2em; font-weight: bold; color: #f5e1a2; }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .gold-market { background: #d4af37; color: black; } 
@@ -30,123 +27,131 @@
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
     <a href="#"><img src="logo.png.png" alt="Logo" style="height: 80px; width: auto;"></a>
-    <select id="lang" onchange="changeLanguage()" style="width:100px; color: black;">
+    <select id="lang" onchange="changeLanguage()" style="width:150px; color: black;">
         <option value="ar">العربية</option>
         <option value="en">English</option>
         <option value="fr">Français</option>
+        <option value="hi">हिन्दी</option>
+        <option value="ur">اردو</option>
+        <option value="fil">Filipino</option>
+        <option value="es">Español</option>
+        <option value="ru">Русский</option>
     </select>
 </div>
 
 <div class="time-bar">
-    <div class="time-box" data-ar="دبي (Dubai)" data-en="Dubai" data-fr="Dubaï (Dubai)"><span id="time-dubai">--:--:--</span></div>
-    <div class="time-box" data-ar="لندن (London)" data-en="London" data-fr="Londres (London)"><span id="time-london">--:--:--</span></div>
-    <div class="time-box" data-ar="نيويورك (NY)" data-en="New York" data-fr="New York (NY)"><span id="time-ny">--:--:--</span></div>
+    <div class="time-box" data-city="dubai">دبي (Dubai)<span id="time-dubai">--:--:--</span></div>
+    <div class="time-box" data-city="london">لندن (London)<span id="time-london">--:--:--</span></div>
+    <div class="time-box" data-city="ny">نيويورك (NY)<span id="time-ny">--:--:--</span></div>
 </div>
 
 <div class="grid">
     <div class="card gold-market">
-        <h2 data-ar="سوق الذهب دبي" data-en="Dubai Gold Market" data-fr="Marché de l'or de Dubaï">سوق الذهب دبي</h2>
+        <h2 data-key="gold_market">سوق الذهب دبي</h2>
         <table>
             <tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr>
             <tr><td>325.00</td><td>302.00</td><td>288.00</td><td>248.00</td></tr>
         </table>
     </div>
-
     <div class="card gold-calc">
-        <h2 data-ar="حاسبة الذهب" data-en="Gold Calculator" data-fr="Calculatrice d'or">حاسبة الذهب</h2>
+        <h2 data-key="gold_calc">حاسبة الذهب</h2>
         <select id="kSelect" onchange="calc()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select>
-        <input type="number" id="grams" value="1" data-ar-placeholder="الوزن" data-en-placeholder="Weight" data-fr-placeholder="Poids" placeholder="الوزن" oninput="calc()">
+        <input type="number" id="grams" value="1" data-placeholder="weight" placeholder="الوزن" oninput="calc()">
         <select id="labor" onchange="calc()"></select>
         <select id="tax" onchange="calc()"></select>
-        <h3 id="finalPrice" data-ar="الإجمالي:" data-en="Total:" data-fr="Total :">الإجمالي: 0.00 AED</h3>
+        <h3 id="finalPrice" data-key="total">الإجمالي: 0.00 AED</h3>
     </div>
-
     <div class="card crypto">
-        <h2 data-ar="حاسبة العملات الرقمية" data-en="Crypto Calculator" data-fr="Calculatrice crypto">حاسبة العملات الرقمية</h2>
-        <input type="number" id="cryptoAmount" data-ar-placeholder="الكمية" data-en-placeholder="Amount" data-fr-placeholder="Quantité" placeholder="الكمية" oninput="calcCrypto()">
+        <h2 data-key="crypto_calc">حاسبة العملات الرقمية</h2>
+        <input type="number" id="cryptoAmount" data-placeholder="amount" placeholder="الكمية" oninput="calcCrypto()">
         <select id="cryptoSelect" onchange="calcCrypto()"></select>
         <select id="currencyTarget" onchange="calcCrypto()">
             <option value="1">USD / USDT</option><option value="3.67">AED</option><option value="3.75">SAR</option>
             <option value="0.92">EUR</option><option value="48.5">EGP</option><option value="83.5">INR</option><option value="56.5">PHP</option>
         </select>
-        <h3 id="cryptoResult" data-ar="القيمة:" data-en="Value:" data-fr="Valeur :">القيمة: 0.00</h3>
+        <h3 id="cryptoResult" data-key="value">القيمة: 0.00</h3>
     </div>
-
     <div class="card zakat">
-        <h2 data-ar="حاسبة زكاة الذهب" data-en="Gold Zakat Calculator" data-fr="Calculatrice Zakat or">حاسبة زكاة الذهب</h2>
+        <h2 data-key="zakat_calc">حاسبة زكاة الذهب</h2>
         <select id="zakatKarat" onchange="calcZakat()">
             <option value="24">24K</option><option value="22">22K</option>
             <option value="21">21K</option><option value="18">18K</option>
         </select>
-        <input type="number" id="zakatGrams" data-ar-placeholder="الوزن بالجرام" data-en-placeholder="Weight in grams" data-fr-placeholder="Poids en grammes" placeholder="الوزن بالجرام" oninput="calcZakat()">
-        <h3 id="zakatResult" data-ar="مبلغ الزكاة: 0.00" data-en="Zakat Due: 0.00" data-fr="Zakat due : 0.00">مبلغ الزكاة: 0.00</h3>
+        <input type="number" id="zakatGrams" data-placeholder="zakat_weight" placeholder="الوزن بالجرام" oninput="calcZakat()">
+        <h3 id="zakatResult" data-key="zakat_due">مبلغ الزكاة: 0.00</h3>
     </div>
 </div>
 
 <script>
+    const tr = {
+        ar: { locale: 'ar-AE', gold_market: "سوق الذهب دبي", gold_calc: "حاسبة الذهب", crypto_calc: "حاسبة العملات الرقمية", zakat_calc: "حاسبة زكاة الذهب", weight: "الوزن", amount: "الكمية", zakat_weight: "الوزن بالجرام", total: "الإجمالي: ", value: "القيمة: ", zakat_due: "مبلغ الزكاة: ", nisab: "لم يبلغ النصاب (85جرام)", dubai: "دبي", london: "لندن", ny: "نيويورك" },
+        en: { locale: 'en-US', gold_market: "Dubai Gold Market", gold_calc: "Gold Calculator", crypto_calc: "Crypto Calculator", zakat_calc: "Gold Zakat Calculator", weight: "Weight", amount: "Amount", zakat_weight: "Weight in grams", total: "Total: ", value: "Value: ", zakat_due: "Zakat Due: ", nisab: "Below Nisab (85g)", dubai: "Dubai", london: "London", ny: "New York" },
+        fr: { locale: 'fr-FR', gold_market: "Marché de l'or de Dubaï", gold_calc: "Calculatrice d'or", crypto_calc: "Calculatrice crypto", zakat_calc: "Calculatrice Zakat or", weight: "Poids", amount: "Quantité", zakat_weight: "Poids en grammes", total: "Total : ", value: "Valeur : ", zakat_due: "Zakat due : ", nisab: "En dessous du Nisab (85g)", dubai: "Dubaï", london: "Londres", ny: "New York" },
+        hi: { locale: 'hi-IN', gold_market: "दुबई स्वर्ण बाजार", gold_calc: "स्वर्ण कैलकुलेटर", crypto_calc: "क्रिप्टो कैलकुलेटर", zakat_calc: "स्वर्ण जकात कैलकुलेटर", weight: "वजन", amount: "मात्रा", zakat_weight: "ग्राम में वजन", total: "कुल: ", value: "मूल्य: ", zakat_due: "देय जकात: ", nisab: "निसाब से कम (85 ग्राम)", dubai: "दुबई", london: "लंदन", ny: "न्यूयॉर्क" },
+        ur: { locale: 'ur-PK', gold_market: "دبئی گولڈ مارکیٹ", gold_calc: "گولڈ کیلکولیٹر", crypto_calc: "کرپٹو کیلکولیٹر", zakat_calc: "زکوٰۃ کیلکولیٹر", weight: "وزن", amount: "مقدار", zakat_weight: "وزن گرام میں", total: "کل: ", value: "قیمت: ", zakat_due: "زکوٰۃ کی رقم: ", nisab: "نصاب سے کم (85 گرام)", dubai: "دبئی", london: "لندن", ny: "نیویارک" },
+        fil: { locale: 'fil-PH', gold_market: "Dubai Gold Market", gold_calc: "Gold Calculator", crypto_calc: "Crypto Calculator", zakat_calc: "Gold Zakat Calculator", weight: "Timbang", amount: "Halaga", zakat_weight: "Timbang sa gramo", total: "Kabuuang: ", value: "Halaga: ", zakat_due: "Zakat Due: ", nisab: "Mababa sa Nisab (85g)", dubai: "Dubai", london: "London", ny: "New York" },
+        es: { locale: 'es-ES', gold_market: "Mercado de oro de Dubái", gold_calc: "Calculadora de oro", crypto_calc: "Calculadora cripto", zakat_calc: "Calculadora Zakat oro", weight: "Peso", amount: "Cantidad", zakat_weight: "Peso en gramos", total: "Total: ", value: "Valor: ", zakat_due: "Zakat a pagar: ", nisab: "Por debajo del Nisab (85g)", dubai: "Dubái", london: "Londres", ny: "Nueva York" },
+        ru: { locale: 'ru-RU', gold_market: "Золотой рынок Дубая", gold_calc: "Золотой калькулятор", crypto_calc: "Крипто калькулятор", zakat_calc: "Калькулятор закята", weight: "Вес", amount: "Количество", zakat_weight: "Вес в граммах", total: "Итого: ", value: "Стоимость: ", zakat_due: "Закят: ", nisab: "Ниже нисаба (85г)", dubai: "Дубай", london: "Лондон", ny: "Нью-Йорк" }
+    };
+
     function updateClocks() {
+        const lang = document.getElementById('lang').value;
+        const locale = tr[lang].locale || 'en-US';
         const opt = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        document.getElementById('time-dubai').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Asia/Dubai' });
-        document.getElementById('time-london').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'Europe/London' });
-        document.getElementById('time-ny').innerText = new Date().toLocaleTimeString('en-US', { ...opt, timeZone: 'America/New_York' });
+        document.getElementById('time-dubai').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'Asia/Dubai' });
+        document.getElementById('time-london').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'Europe/London' });
+        document.getElementById('time-ny').innerText = new Date().toLocaleTimeString(locale, { ...opt, timeZone: 'America/New_York' });
     }
     setInterval(updateClocks, 1000);
-    updateClocks();
+
+    function changeLanguage() {
+        const lang = document.getElementById('lang').value;
+        const d = tr[lang];
+        document.getElementById('htmlTag').dir = (lang === 'ar' || lang === 'ur') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-key]').forEach(el => el.childNodes[0].nodeValue = d[el.getAttribute('data-key')]);
+        document.querySelectorAll('[data-placeholder]').forEach(el => el.placeholder = d[el.getAttribute('data-placeholder')]);
+        document.querySelectorAll('[data-city]').forEach(el => {
+            const cityKey = el.getAttribute('data-city');
+            const span = el.querySelector('span');
+            el.childNodes[0].nodeValue = d[cityKey] + " ";
+        });
+        calc(); calcCrypto(); calcZakat(); updateClocks();
+    }
 
     const labor = document.getElementById('labor');
     const tax = document.getElementById('tax');
-    [5,10,15,20,25,30,35,40,45,50,55,60,65].forEach(val => labor.innerHTML += `<option value="${val/100}">${val}%</option>`);
-    [0,5,10,15,20,25,30].forEach(val => tax.innerHTML += `<option value="${val/100}">${val}%</option>`);
+    [5,10,15,20,25,30,35,40,45,50,55,60,65].forEach(v => labor.innerHTML += `<option value="${v/100}">${v}%</option>`);
+    [0,5,10,15,20,25,30].forEach(v => tax.innerHTML += `<option value="${v/100}">${v}%</option>`);
 
     const cryptoData = [{name:"Bitcoin",val:65000},{name:"Ethereum",val:3500},{name:"USDT",val:1},{name:"XRP",val:0.5},{name:"Solana",val:150},{name:"BNB",val:500},{name:"Dogecoin",val:0.1},{name:"Cardano",val:0.4},{name:"Shiba Inu",val:0.00002},{name:"Avalanche",val:30}];
     cryptoData.forEach(c => document.getElementById('cryptoSelect').innerHTML += `<option value="${c.val}">${c.name}</option>`);
 
-    function changeLanguage() {
-        let l = document.getElementById('lang').value;
-        document.getElementById('htmlTag').dir = (l === 'ar') ? 'rtl' : 'ltr';
-        document.querySelectorAll('[data-' + l + ']').forEach(el => el.innerText = el.getAttribute('data-' + l));
-        document.querySelectorAll('input').forEach(el => {
-            let ph = el.getAttribute('data-' + l + '-placeholder');
-            if(ph) el.placeholder = ph;
-        });
-        calc(); calcCrypto(); calcZakat();
-    }
-
     function calc() {
-        let l = document.getElementById('lang').value;
-        let prefix = (l === 'ar') ? "الإجمالي: " : (l === 'fr') ? "Total : " : "Total: ";
-        let prices = {'24':325, '22':302, '21':288, '18':248};
-        let p = prices[document.getElementById('kSelect').value];
+        let p = {'24':325, '22':302, '21':288, '18':248}[document.getElementById('kSelect').value];
         let g = parseFloat(document.getElementById('grams').value) || 0;
         let lab = parseFloat(document.getElementById('labor').value) || 0;
         let taxVal = parseFloat(document.getElementById('tax').value) || 0;
-        document.getElementById('finalPrice').innerText = prefix + ((p * g) * (1 + lab + taxVal)).toFixed(2) + " AED";
+        document.getElementById('finalPrice').childNodes[0].nodeValue = tr[document.getElementById('lang').value].total + ((p * g) * (1 + lab + taxVal)).toFixed(2) + " AED";
     }
 
     function calcCrypto() {
-        let l = document.getElementById('lang').value;
-        let prefix = (l === 'ar') ? "القيمة: " : (l === 'fr') ? "Valeur : " : "Value: ";
         let a = parseFloat(document.getElementById('cryptoAmount').value) || 0;
         let p = parseFloat(document.getElementById('cryptoSelect').value) || 0;
         let c = parseFloat(document.getElementById('currencyTarget').value) || 1;
-        document.getElementById('cryptoResult').innerText = prefix + (a * p * c).toFixed(2);
+        document.getElementById('cryptoResult').childNodes[0].nodeValue = tr[document.getElementById('lang').value].value + (a * p * c).toFixed(2);
     }
 
     function calcZakat() {
         let l = document.getElementById('lang').value;
         let karat = parseFloat(document.getElementById('zakatKarat').value);
         let grams = parseFloat(document.getElementById('zakatGrams').value) || 0;
-        let pureGold = grams * (karat / 24);
-        let prefix = (l === 'ar') ? "مبلغ الزكاة: " : (l === 'fr') ? "Zakat due : " : "Zakat Due: ";
-        let nisabMsg = (l === 'ar') ? "لم يبلغ النصاب (85جرام)" : (l === 'fr') ? "En dessous du Nisab (85g)" : "Below Nisab (85g)";
-        
-        if (pureGold >= 85) {
-            let zakat = (pureGold * 325) * 0.025;
-            document.getElementById('zakatResult').innerText = prefix + zakat.toFixed(2) + " AED";
-        } else {
-            document.getElementById('zakatResult').innerText = nisabMsg;
-        }
+        let pure = grams * (karat / 24);
+        let res = (pure >= 85) ? ((pure * 325) * 0.025).toFixed(2) + " AED" : tr[l].nisab;
+        document.getElementById('zakatResult').childNodes[0].nodeValue = tr[l].zakat_due + (pure >= 85 ? res : "");
+        if(pure < 85) document.getElementById('zakatResult').innerText = res;
     }
+    
+    updateClocks();
 </script>
 </body>
 </html>
