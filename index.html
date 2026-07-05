@@ -1,120 +1,800 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlTag">
-<head><script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script>
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'ar,en,fr,hi,ru,ur,tr,uk,es,zh'}, 'google_translate_element');
-}
-</script>
-<div id="google_translate_element"></div>
-    <meta charset="UTF-8">
-    <title>ZAHAB RATE Dashboard</title>
-    <style>
-        <div id="google_translate_element"></div>
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'ar'}, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-        body { font-family: sans-serif; background: #1a1a1a; padding: 20px; color: #FFFDD0; }
-        .time-bar { display: flex; justify-content: space-around; background: #212121; border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; }
-        .time-box span { display: block; font-size: 1.2em; font-weight: bold; color: #f5e1a2; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { padding: 20px; border-radius: 15px; color: white; margin-bottom: 20px; }
-        .gold-market { background: #d4af37; color: black; } 
-        .gold-calc { background: #2c3e50; } 
-        .crypto { background: #c0392b; }
-        .zakat { background: #27ae60; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
-        th, td { padding: 8px; border: 1px solid #333; text-align: center; color: black; }
-        select, input { width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 5px; color: black; }
-        /* تصميم شاشة الحاسبة */
-        .calc-screen { background: #000; color: #0f0; padding: 15px; border-radius: 5px; text-align: center; font-family: monospace; font-size: 1.5em; margin-bottom: 10px; border: 2px inset #555; }
-    </style>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZAHAB RATE | ذهب ريت</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Poppins:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#060c1f;
+    --navy:#0b1638;
+    --navy-light:#132355;
+    --gold:#e8b83d;
+    --gold-bright:#f6d878;
+    --gold-dark:#a97a1f;
+    --cream:#fbf3df;
+    --ink:#ffffff;
+    --muted:#b9c2e0;
+    --green:#3ecf7a;
+    --red:#ff6161;
+    --radius:16px;
+    --font-display:'Cinzel','Tajawal',serif;
+    --font-ar:'Tajawal','Noto Sans Arabic',sans-serif;
+    --font-body:'Poppins','Noto Sans','Noto Sans SC','Noto Sans Devanagari',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% -10%, #1a2a63 0%, transparent 45%),
+      radial-gradient(circle at 90% 10%, #1a2a63 0%, transparent 40%),
+      linear-gradient(180deg,var(--navy-deep) 0%, var(--navy) 40%, var(--navy-deep) 100%);
+    color:var(--ink);
+    font-family:var(--font-ar);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body[data-dir="ltr"]{font-family:var(--font-body);}
+  ::selection{background:var(--gold);color:var(--navy-deep);}
+
+  a{color:inherit;}
+
+  /* subtle animated gold flecks background */
+  .bg-glow{
+    position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(232,184,61,.35), transparent),
+      radial-gradient(2px 2px at 70% 60%, rgba(232,184,61,.25), transparent),
+      radial-gradient(1.5px 1.5px at 85% 20%, rgba(232,184,61,.3), transparent),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(232,184,61,.25), transparent),
+      radial-gradient(2px 2px at 55% 15%, rgba(232,184,61,.2), transparent);
+    animation:drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-30px)}}
+
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 5%;
+    background:rgba(6,12,31,.75);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(232,184,61,.25);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand img{height:52px;width:auto;filter:drop-shadow(0 0 10px rgba(232,184,61,.4));}
+  .brand-text{display:flex;flex-direction:column;line-height:1.1;}
+  .brand-text b{font-family:var(--font-display);font-size:1.3rem;letter-spacing:1px;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold-dark));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .brand-text span{font-size:.68rem;color:var(--muted);letter-spacing:2px;}
+
+  nav.mainnav{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+  nav.mainnav a{
+    font-size:.92rem;font-weight:600;text-decoration:none;color:var(--muted);
+    position:relative;padding:4px 0;transition:color .2s;white-space:nowrap;
+  }
+  nav.mainnav a:hover{color:var(--gold-bright);}
+
+  .lang-select{
+    background:var(--navy-light);
+    border:1px solid rgba(232,184,61,.4);
+    color:var(--ink);
+    padding:8px 14px;
+    border-radius:10px;
+    font-family:inherit;
+    font-size:.85rem;
+    cursor:pointer;
+  }
+  .hamburger{display:none;background:none;border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:8px 10px;font-size:1.1rem;cursor:pointer;}
+
+  section{padding:70px 6%;position:relative;z-index:1;}
+  .hero{
+    padding-top:60px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+  }
+  .hero .eyebrow{
+    font-size:.8rem;letter-spacing:3px;color:var(--gold-bright);
+    border:1px solid rgba(232,184,61,.5);padding:6px 18px;border-radius:30px;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-size:clamp(2.1rem,5vw,3.6rem);
+    margin:6px 0;
+    background:linear-gradient(180deg,#fff8e6,var(--gold),var(--gold-dark));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 30px rgba(232,184,61,.25);
+  }
+  .hero p{max-width:680px;color:var(--muted);font-size:1.05rem;line-height:1.8;}
+
+  /* live price screens */
+  .screens-title, .section-title{
+    text-align:center;font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.2rem);
+    margin-bottom:8px;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold-dark));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .section-sub{text-align:center;color:var(--muted);margin-bottom:40px;font-size:.95rem;}
+
+  .screens{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:26px;max-width:1200px;margin:0 auto;
+  }
+  .screen{
+    background:linear-gradient(160deg,#0d1a40,#070f28);
+    border:1px solid rgba(232,184,61,.35);
+    border-radius:var(--radius);
+    padding:26px 20px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    min-height:260px;justify-content:space-between;
+    box-shadow:0 15px 40px rgba(0,0,0,.35), inset 0 0 30px rgba(232,184,61,.03);
+    position:relative;overflow:hidden;
+  }
+  .screen::before{
+    content:"";position:absolute;top:-40%;left:-20%;width:60%;height:180%;
+    background:linear-gradient(120deg, rgba(232,184,61,0), rgba(232,184,61,.08), rgba(232,184,61,0));
+    animation:sheen 5s linear infinite;
+  }
+  @keyframes sheen{0%{transform:translateX(-120%)}100%{transform:translateX(260%)}}
+  .screen .flag{font-size:2.6rem;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));}
+  .screen .market-name{font-weight:700;font-size:1rem;color:var(--gold-bright);letter-spacing:.5px;text-align:center;}
+  .screen .price{
+    font-family:'Poppins',monospace;font-weight:700;font-size:2.1rem;color:#fff;
+    display:flex;align-items:baseline;gap:6px;
+  }
+  .screen .price small{font-size:.9rem;color:var(--muted);font-weight:500;}
+  .screen .trend{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:5px;}
+  .trend.up{color:var(--green);}
+  .trend.down{color:var(--red);}
+  .screen .updated{font-size:.72rem;color:var(--muted);opacity:.8;}
+  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;
+    box-shadow:0 0 0 rgba(62,207,122,.6);animation:pulse 1.6s infinite;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(62,207,122,.6);}
+    70%{box-shadow:0 0 0 10px rgba(62,207,122,0);}
+    100%{box-shadow:0 0 0 0 rgba(62,207,122,0);}
+  }
+
+  .spacer-lines{height:2.6em;}
+
+  /* Calculators */
+  .calc-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:26px;max-width:1300px;margin:0 auto;
+    align-items:stretch;
+  }
+  .calc-card{
+    background:linear-gradient(160deg,#0e1a42,#080f2a);
+    border:1px solid rgba(232,184,61,.3);
+    border-radius:var(--radius);
+    padding:26px 22px;
+    display:flex;flex-direction:column;gap:14px;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+  }
+  .calc-card h3{
+    margin:0 0 4px;font-family:var(--font-display);color:var(--gold-bright);font-size:1.25rem;
+    display:flex;align-items:center;gap:10px;
+  }
+  .calc-card h3 .ic{font-size:1.4rem;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:.82rem;color:var(--muted);font-weight:600;}
+  .field input[type=number], .field select{
+    background:var(--navy-deep);border:1px solid rgba(232,184,61,.35);color:#fff;
+    padding:10px 12px;border-radius:10px;font-size:.95rem;font-family:inherit;
+  }
+  .field input[type=range]{accent-color:var(--gold);}
+  .range-row{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);}
+  .btn-gold{
+    margin-top:6px;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold-dark));
+    color:var(--navy-deep);border:none;padding:12px;border-radius:10px;
+    font-weight:800;font-size:.95rem;cursor:pointer;letter-spacing:.5px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(232,184,61,.35);}
+  .result-box{
+    margin-top:6px;background:rgba(232,184,61,.08);border:1px dashed rgba(232,184,61,.5);
+    border-radius:10px;padding:12px 14px;font-weight:700;color:var(--gold-bright);
+    display:flex;justify-content:space-between;align-items:center;font-size:1.05rem;
+    min-height:48px;
+  }
+  .note{font-size:.72rem;color:var(--muted);opacity:.85;}
+
+  .zakat-info{
+    max-width:900px;margin:0 auto;text-align:center;
+    background:rgba(232,184,61,.06);border:1px solid rgba(232,184,61,.25);
+    border-radius:var(--radius);padding:34px 28px;line-height:2;color:var(--cream);font-size:.98rem;
+  }
+
+  /* About / services */
+  .about-wrap{max-width:900px;margin:0 auto;text-align:center;}
+  .about-wrap p{color:var(--muted);font-size:1.02rem;line-height:1.9;}
+
+  .services-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1200px;margin:0 auto;
+  }
+  .service-card{
+    background:linear-gradient(160deg,#0e1a42,#080f2a);
+    border:1px solid rgba(232,184,61,.3);border-radius:var(--radius);
+    padding:30px 24px;text-align:center;transition:transform .2s;
+  }
+  .service-card:hover{transform:translateY(-6px);}
+  .service-card .ic{font-size:2.4rem;margin-bottom:12px;}
+  .service-card h4{color:var(--gold-bright);font-family:var(--font-display);margin:0 0 10px;font-size:1.15rem;}
+  .service-card p{color:var(--muted);font-size:.9rem;line-height:1.8;margin:0;}
+
+  .books-wrap{
+    max-width:900px;margin:0 auto;text-align:center;
+    background:linear-gradient(135deg, rgba(232,184,61,.12), rgba(232,184,61,.02));
+    border:1px solid rgba(232,184,61,.35);border-radius:var(--radius);padding:40px 30px;
+  }
+  .books-wrap .ic{font-size:2.8rem;}
+  .books-wrap p{color:var(--muted);line-height:1.9;margin:14px 0 20px;}
+
+  .legal-wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:34px;}
+  .legal-block h3{color:var(--gold-bright);font-family:var(--font-display);font-size:1.2rem;margin-bottom:10px;}
+  .legal-block p{color:var(--muted);line-height:1.9;font-size:.92rem;}
+
+  .contact-wrap{max-width:700px;margin:0 auto;text-align:center;}
+  .contact-wrap p{color:var(--muted);line-height:1.8;}
+  .email-pill{
+    display:inline-flex;align-items:center;gap:10px;margin-top:14px;
+    background:var(--navy-light);border:1px solid var(--gold);padding:12px 22px;border-radius:30px;
+    font-weight:700;color:var(--gold-bright);text-decoration:none;font-size:1rem;
+  }
+
+  footer{
+    text-align:center;padding:30px 5%;color:var(--muted);font-size:.82rem;
+    border-top:1px solid rgba(232,184,61,.2);
+  }
+
+  @media (max-width:980px){
+    .screens, .calc-grid, .services-grid{grid-template-columns:1fr;}
+    nav.mainnav{display:none;position:absolute;top:100%;inset-inline:0;background:var(--navy-deep);
+      flex-direction:column;padding:16px 24px;border-bottom:1px solid rgba(232,184,61,.3);}
+    nav.mainnav.open{display:flex;}
+    .hamburger{display:inline-block;}
+  }
+</style>
 </head>
-<body>
+<body data-dir="rtl">
+<div class="bg-glow"></div>
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <img src="logo.png.png" alt="Logo" style="height: 80px;">
-    <select id="lang" onchange="changeLanguage()" style="width:200px; color: black;">
-        <option value="ar">🇸🇦 العربية</option><option value="en">🇺🇸 English</option><option value="fr">🇫🇷 Français</option>
-        <option value="es">🇪🇸 Español</option><option value="de">🇩🇪 Deutsch</option><option value="it">🇮🇹 Italiano</option>
-        <option value="pt">🇵🇹 Português</option><option value="ru">🇷🇺 Русский</option><option value="zh">🇨🇳 中文</option>
-        <option value="hi">🇮🇳 हिन्दी</option>
+<header>
+  <div class="brand">
+    <img src="logo.png" alt="Zahab Rate Logo">
+    <div class="brand-text">
+      <b>ZAHAB RATE</b>
+      <span data-i18n="brand_tag">أسعار الذهب لحظياً</span>
+    </div>
+  </div>
+  <nav class="mainnav" id="mainnav">
+    <a href="#prices" data-i18n="nav_home">الرئيسية</a>
+    <a href="#calculators" data-i18n="nav_calculators">الحاسبات</a>
+    <a href="#about" data-i18n="nav_about">من نحن</a>
+    <a href="#services" data-i18n="nav_services">خدماتنا</a>
+    <a href="#books" data-i18n="nav_books">الكتب الرقمية</a>
+    <a href="#terms" data-i18n="nav_terms">سياسة الاستخدام</a>
+    <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <select class="lang-select" id="langSelect">
+      <option value="ar">🇦🇪 العربية</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="ru">🇷🇺 Русский</option>
+      <option value="hi">🇮🇳 हिन्दी</option>
+      <option value="ur">🇵🇰 اردو</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="uk">🇺🇦 Українська</option>
+      <option value="tl">🇵🇭 Filipino</option>
+      <option value="es">🇪🇸 Español</option>
     </select>
-</div>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</header>
 
-<div class="time-bar">
-    <div class="time-box"><span data-i18n="dubai">دبي</span><span id="time-dubai">--:--:--</span></div>
-    <div class="time-box"><span data-i18n="london">لندن</span><span id="time-london">--:--:--</span></div>
-    <div class="time-box"><span data-i18n="ny">نيويورك</span><span id="time-ny">--:--:--</span></div>
-</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow" data-i18n="eyebrow">منصة الذهب والعملات الرقمية</div>
+  <h1 data-i18n="hero_title">أسعار الذهب والعملات الرقمية لحظياً</h1>
+  <p data-i18n="hero_subtitle">تابع أسعار الذهب بالتجزئة في دبي والسعودية ومصر لحظياً، واستخدم حاسباتنا الذكية للذهب والزكاة والعملات الرقمية.</p>
+</section>
 
-<div class="grid">
-<div class="card gold-market">
-    <h2 data-i18n="gold_market">أسعار الذهب المباشرة</h2>
-    <iframe src="https://goldbroker.com/widget/live-price/XAU?currency=USD" width="100%" height="130" style="border: 0; overflow: hidden;"></iframe>
-</div>
-    <div class="card gold-calc">
-        <h2 data-i18n="gold_calc">حاسبة الذهب</h2>
-        <div class="calc-screen" id="finalPrice">0.00 AED</div>
-        <select id="kSelect" onchange="calc()"><option value="325">24K</option><option value="302">22K</option><option value="288">21K</option><option value="248">18K</option></select>
-        <input type="number" id="grams" placeholder="الوزن" oninput="calc()">
-        <select id="labor" onchange="calc()"></select><select id="tax" onchange="calc()"></select>
+<!-- LIVE PRICE SCREENS -->
+<section id="prices">
+  <div class="screens-title" data-i18n="prices_title">شاشات أسعار الذهب المباشرة</div>
+  <div class="section-sub" data-i18n="prices_sub">تتحدث الأسعار تلقائياً كل بضع ثوانٍ</div>
+  <div class="screens">
+    <div class="screen">
+      <div class="flag">🇦🇪</div>
+      <div class="market-name" data-i18n="price_dubai">سعر الذهب - دبي (درهم)</div>
+      <div class="price"><span id="price-dubai">0.00</span><small>AED/g</small></div>
+      <div class="trend up" id="trend-dubai"><span class="pulse-dot"></span> +0.00%</div>
+      <div class="updated"><span data-i18n="updated_label">آخر تحديث:</span> <span id="time-dubai">--:--:--</span></div>
     </div>
+    <div class="screen">
+      <div class="flag">🇸🇦</div>
+      <div class="market-name" data-i18n="price_ksa">سعر الذهب - السعودية (ريال)</div>
+      <div class="price"><span id="price-ksa">0.00</span><small>SAR/g</small></div>
+      <div class="trend up" id="trend-ksa"><span class="pulse-dot"></span> +0.00%</div>
+      <div class="updated"><span data-i18n="updated_label">آخر تحديث:</span> <span id="time-ksa">--:--:--</span></div>
+    </div>
+    <div class="screen">
+      <div class="flag">🇪🇬</div>
+      <div class="market-name" data-i18n="price_egypt">سعر الذهب - مصر (جنيه)</div>
+      <div class="price"><span id="price-egypt">0.00</span><small>EGP/g</small></div>
+      <div class="trend up" id="trend-egypt"><span class="pulse-dot"></span> +0.00%</div>
+      <div class="updated"><span data-i18n="updated_label">آخر تحديث:</span> <span id="time-egypt">--:--:--</span></div>
+    </div>
+  </div>
+</section>
 
-    <div class="card crypto">
-        <h2 data-i18n="crypto_calc">حاسبة العملات الرقمية</h2>
-        <div class="calc-screen" id="cryptoResult">0.00</div>
-        <input type="number" id="cryptoAmount" placeholder="عدد العملة" oninput="calcCrypto()">
-        <select id="cryptoSelect" onchange="calcCrypto()"></select>
-        <select id="currencyTarget" onchange="calcCrypto()">
-            <option value="1">USD</option><option value="3.67">AED</option><option value="3.75">SAR</option><option value="0.92">EUR</option>
-            <option value="48.5">EGP</option><option value="0.30">KWD</option><option value="0.38">OMR</option><option value="83.5">INR</option><option value="56.5">PHP</option>
+<div class="spacer-lines"></div>
+
+<!-- CALCULATORS -->
+<section id="calculators">
+  <div class="screens-title" data-i18n="calc_title">الحاسبات الذكية</div>
+  <div class="section-sub" data-i18n="calc_sub">احسب قيمة الذهب والزكاة والعملات الرقمية بدقة</div>
+  <div class="calc-grid">
+
+    <!-- GOLD CALCULATOR -->
+    <div class="calc-card">
+      <h3><span class="ic">🧮</span><span data-i18n="gold_calc_title">حاسبة الذهب</span></h3>
+      <div class="field">
+        <label data-i18n="market_label">السوق</label>
+        <select id="gc-market">
+          <option value="dubai" data-i18n="opt_dubai">دبي (درهم)</option>
+          <option value="ksa" data-i18n="opt_ksa">السعودية (ريال)</option>
+          <option value="egypt" data-i18n="opt_egypt">مصر (جنيه)</option>
         </select>
+      </div>
+      <div class="field">
+        <label data-i18n="karat_label">العيار</label>
+        <select id="gc-karat">
+          <option value="1">24K</option>
+          <option value="0.9167">22K</option>
+          <option value="0.875" selected>21K</option>
+          <option value="0.75">18K</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-i18n="weight_label">الوزن (جرام)</label>
+        <input type="number" id="gc-weight" min="0" step="0.1" value="10">
+      </div>
+      <div class="field">
+        <label><span data-i18n="tax_label">الضريبة</span>: <span id="gc-tax-val">5</span>%</label>
+        <input type="range" id="gc-tax" min="0" max="50" value="5">
+        <div class="range-row"><span>0%</span><span>50%</span></div>
+      </div>
+      <div class="field">
+        <label><span data-i18n="making_label">مصنعية</span>: <span id="gc-make-val">10</span>%</label>
+        <input type="range" id="gc-make" min="0" max="70" value="10">
+        <div class="range-row"><span>0%</span><span>70%</span></div>
+      </div>
+      <button class="btn-gold" onclick="calcGold()" data-i18n="calculate_btn">احسب</button>
+      <div class="result-box"><span data-i18n="result_label">الإجمالي:</span><span id="gc-result">--</span></div>
     </div>
 
-    <div class="card zakat">
-        <h2 data-i18n="zakat_calc">حاسبة زكاة الذهب</h2>
-        <div class="calc-screen" id="zakatResult">0.00</div>
-        <select id="zakatKarat" onchange="calcZakat()"><option value="24">24K</option><option value="22">22K</option></select>
-        <input type="number" id="zakatGrams" placeholder="الوزن" oninput="calcZakat()">
+    <!-- ZAKAT CALCULATOR -->
+    <div class="calc-card">
+      <h3><span class="ic">🕌</span><span data-i18n="zakat_calc_title">حاسبة الزكاة</span></h3>
+      <div class="field">
+        <label data-i18n="market_label">السوق</label>
+        <select id="zc-market">
+          <option value="dubai" data-i18n="opt_dubai">دبي (درهم)</option>
+          <option value="ksa" data-i18n="opt_ksa">السعودية (ريال)</option>
+          <option value="egypt" data-i18n="opt_egypt">مصر (جنيه)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-i18n="zakat_amount_label">كمية الذهب التي تملكها (جرام)</label>
+        <input type="number" id="zc-grams" min="0" step="0.1" value="85">
+      </div>
+      <div class="note"><span data-i18n="nisab_note">نصاب الذهب الشرعي: 85 جرام (عيار 24)</span></div>
+      <button class="btn-gold" onclick="calcZakat()" data-i18n="calculate_btn">احسب</button>
+      <div class="result-box"><span data-i18n="zakat_result_label">الزكاة الواجبة:</span><span id="zc-result">--</span></div>
     </div>
-</div>
+
+    <!-- CRYPTO CALCULATOR -->
+    <div class="calc-card">
+      <h3><span class="ic">₿</span><span data-i18n="crypto_calc_title">حاسبة العملات الرقمية</span></h3>
+      <div class="field">
+        <label data-i18n="coin_label">العملة الرقمية</label>
+        <select id="cc-coin">
+          <option value="BTC">Bitcoin (BTC)</option>
+          <option value="ETH">Ethereum (ETH)</option>
+          <option value="USDT">Tether (USDT)</option>
+          <option value="BNB">BNB</option>
+          <option value="SOL">Solana (SOL)</option>
+          <option value="XRP">XRP</option>
+          <option value="USDC">USD Coin (USDC)</option>
+          <option value="ADA">Cardano (ADA)</option>
+          <option value="DOGE">Dogecoin (DOGE)</option>
+          <option value="TON">Toncoin (TON)</option>
+          <option value="TRX">TRON (TRX)</option>
+          <option value="LINK">Chainlink (LINK)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-i18n="amount_label">الكمية</label>
+        <input type="number" id="cc-amount" min="0" step="0.0001" value="1">
+      </div>
+      <div class="field">
+        <label data-i18n="currency_label">التحويل إلى</label>
+        <select id="cc-currency">
+          <option value="USD">USD $</option>
+          <option value="EUR">EUR €</option>
+          <option value="AED">AED د.إ</option>
+          <option value="SAR">SAR ر.س</option>
+          <option value="EGP">EGP ج.م</option>
+          <option value="INR">INR ₹</option>
+          <option value="QAR">QAR ر.ق</option>
+          <option value="OMR">OMR ر.ع</option>
+          <option value="BHD">BHD د.ب</option>
+          <option value="KWD">KWD د.ك</option>
+        </select>
+      </div>
+      <button class="btn-gold" onclick="calcCrypto()" data-i18n="calculate_btn">احسب</button>
+      <div class="result-box"><span data-i18n="crypto_result_label">القيمة:</span><span id="cc-result">--</span></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="spacer-lines"></div>
+
+<!-- ZAKAT INFO -->
+<section id="zakat-info">
+  <div class="screens-title" data-i18n="zakat_info_title">نبذة عن أحكام زكاة الذهب</div>
+  <div class="zakat-info" data-i18n="zakat_info_text">
+    تجب الزكاة في الذهب إذا بلغ النصاب الشرعي وهو ما يعادل 85 جراماً من الذهب عيار 24، وحال عليه الحول (سنة هجرية كاملة)، وتكون نسبة الزكاة الواجبة 2.5% من قيمة الذهب المملوك. يُستثنى من ذلك الذهب المستخدم للزينة الشخصية بحسب رأي بعض أهل العلم، بينما يرى آخرون وجوب الزكاة فيه أيضاً. يُنصح دائماً بالرجوع إلى جهة إفتاء موثوقة لمعرفة الحكم الدقيق بحسب حالتكم الخاصة.
+  </div>
+</section>
+
+<!-- ABOUT US -->
+<section id="about">
+  <div class="screens-title" data-i18n="about_title">من نحن</div>
+  <div class="about-wrap">
+    <p data-i18n="about_text">
+      ZAHAB RATE منصة متخصصة في تقديم أسعار الذهب بالتجزئة لحظياً في دبي والسعودية ومصر، إلى جانب أدوات ذكية لحساب قيمة الذهب والزكاة الشرعية وتحويل العملات الرقمية. نسعى لتمكين مستخدمينا من اتخاذ قرارات مالية مدروسة عبر بيانات دقيقة وواجهة سهلة الاستخدام تدعم عدة لغات حول العالم.
+    </p>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="screens-title" data-i18n="services_title">خدماتنا</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="ic">📡</div>
+      <h4 data-i18n="service1_title">متابعة الأسعار المباشرة</h4>
+      <p data-i18n="service1_desc">شاشات محدثة تلقائياً لأسعار الذهب في دبي والسعودية ومصر على مدار اليوم.</p>
+    </div>
+    <div class="service-card">
+      <div class="ic">🧮</div>
+      <h4 data-i18n="service2_title">الحاسبات الذكية</h4>
+      <p data-i18n="service2_desc">حاسبات دقيقة للذهب والزكاة الشرعية والعملات الرقمية تساعدك على اتخاذ القرار الصحيح.</p>
+    </div>
+    <div class="service-card">
+      <div class="ic">📚</div>
+      <h4 data-i18n="service3_title">إصدارات رقمية تعليمية</h4>
+      <p data-i18n="service3_desc">كتب رقمية متخصصة في الاستثمار في الذهب ومبادئ المالية الإسلامية.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DIGITAL BOOKS -->
+<section id="books">
+  <div class="books-wrap">
+    <div class="ic">📖</div>
+    <div class="screens-title" data-i18n="books_title">الكتب الرقمية</div>
+    <p data-i18n="books_text">استكشف مجموعتنا من الكتب الرقمية المتخصصة في استراتيجيات الاستثمار في الذهب وتحليل الأسواق ومبادئ المالية الإسلامية.</p>
+    <a href="mailto:info@zahabrate.com" class="btn-gold" style="text-decoration:none;display:inline-block;" data-i18n="books_cta">تصفح المكتبة</a>
+  </div>
+</section>
+
+<!-- TERMS & DISCLAIMER -->
+<section id="terms">
+  <div class="legal-wrap">
+    <div class="legal-block">
+      <h3 data-i18n="terms_title">سياسة الاستخدام</h3>
+      <p data-i18n="terms_text">باستخدامك لموقع ZAHAB RATE فإنك توافق على استخدام المحتوى والأدوات المتاحة لأغراض إعلامية وتعليمية فقط. الأسعار المعروضة تقديرية وقد تختلف عن أسعار السوق الفعلية لدى محال الصاغة. يلتزم المستخدم بعدم إساءة استخدام الموقع أو محاولة التلاعب بأدواته أو نسخ محتواه دون إذن.
+      </p>
+    </div>
+    <div class="legal-block">
+      <h3 data-i18n="disclaimer_title">إخلاء المسؤولية القانونية</h3>
+      <p data-i18n="disclaimer_text">جميع الأسعار والبيانات والحاسبات المعروضة في هذا الموقع هي لأغراض استرشادية وتعليمية فقط، ولا تُعد نصيحة مالية أو شرعية أو استثمارية. لا تتحمل إدارة ZAHAB RATE أي مسؤولية عن أي قرارات مالية أو شرعية تُتخذ بناءً على المعلومات الواردة في الموقع. يُنصح دوماً بالرجوع إلى مستشار مالي مرخص أو جهة إفتاء معتمدة قبل اتخاذ أي قرار.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="screens-title" data-i18n="contact_title">تواصل معنا</div>
+    <p data-i18n="contact_text">لأي استفسارات أو شراكات أو دعم فني، يسعدنا تواصلكم معنا عبر البريد الإلكتروني.</p>
+    <a href="mailto:info@zahabrate.com" class="email-pill">✉️ info@zahabrate.com</a>
+  </div>
+</section>
+
+<footer>
+  <div data-i18n="footer_rights">© 2026 ZAHAB RATE. جميع الحقوق محفوظة.</div>
+</footer>
 
 <script>
-    // الدوال الاصلية كما هي
-    function calc() {
-        let p = parseFloat(document.getElementById('kSelect').value);
-        let g = parseFloat(document.getElementById('grams').value) || 0;
-        let l = parseFloat(document.getElementById('labor').value) || 0;
-        let t = parseFloat(document.getElementById('tax').value) || 0;
-        document.getElementById('finalPrice').innerText = ((p * g) * (1 + l + t)).toFixed(2) + " AED";
-    }
-    function calcCrypto() {
-        let r = (parseFloat(document.getElementById('cryptoAmount').value) || 0) * (parseFloat(document.getElementById('cryptoSelect').value) || 0) * (parseFloat(document.getElementById('currencyTarget').value) || 1);
-        document.getElementById('cryptoResult').innerText = r.toFixed(2);
-    }
-    function calcZakat() {
-        let g = parseFloat(document.getElementById('zakatGrams').value) || 0;
-        document.getElementById('zakatResult').innerText = g >= 85 ? ((g * 325) * 0.025).toFixed(2) + " AED" : "دون النصاب";
-    }
-    
-    // الساعة
-    function updateClocks() {
-        const zones = ['Asia/Dubai', 'Europe/London', 'America/New_York'];
-        const ids = ['time-dubai', 'time-london', 'time-ny'];
-        zones.forEach((z, i) => document.getElementById(ids[i]).innerText = new Date().toLocaleTimeString('en-GB', {timeZone: z}));
-    }
-    setInterval(updateClocks, 1000);
-    updateClocks();
+/* ================= TRANSLATIONS ================= */
+const translations = {
+ar:{brand_tag:"أسعار الذهب لحظياً",nav_home:"الرئيسية",nav_calculators:"الحاسبات",nav_about:"من نحن",nav_services:"خدماتنا",nav_books:"الكتب الرقمية",nav_terms:"سياسة الاستخدام",nav_contact:"تواصل معنا",
+eyebrow:"منصة الذهب والعملات الرقمية",hero_title:"أسعار الذهب والعملات الرقمية لحظياً",hero_subtitle:"تابع أسعار الذهب بالتجزئة في دبي والسعودية ومصر لحظياً، واستخدم حاسباتنا الذكية للذهب والزكاة والعملات الرقمية.",
+prices_title:"شاشات أسعار الذهب المباشرة",prices_sub:"تتحدث الأسعار تلقائياً كل بضع ثوانٍ",price_dubai:"سعر الذهب - دبي (درهم)",price_ksa:"سعر الذهب - السعودية (ريال)",price_egypt:"سعر الذهب - مصر (جنيه)",updated_label:"آخر تحديث:",
+calc_title:"الحاسبات الذكية",calc_sub:"احسب قيمة الذهب والزكاة والعملات الرقمية بدقة",
+gold_calc_title:"حاسبة الذهب",market_label:"السوق",opt_dubai:"دبي (درهم)",opt_ksa:"السعودية (ريال)",opt_egypt:"مصر (جنيه)",karat_label:"العيار",weight_label:"الوزن (جرام)",tax_label:"الضريبة",making_label:"مصنعية",calculate_btn:"احسب",result_label:"الإجمالي:",
+zakat_calc_title:"حاسبة الزكاة",zakat_amount_label:"كمية الذهب التي تملكها (جرام)",nisab_note:"نصاب الذهب الشرعي: 85 جرام (عيار 24)",zakat_result_label:"الزكاة الواجبة:",zakat_due:"تجب الزكاة",zakat_not_due:"أقل من النصاب - لا زكاة واجبة",
+crypto_calc_title:"حاسبة العملات الرقمية",coin_label:"العملة الرقمية",amount_label:"الكمية",currency_label:"التحويل إلى",crypto_result_label:"القيمة:",
+zakat_info_title:"نبذة عن أحكام زكاة الذهب",zakat_info_text:"تجب الزكاة في الذهب إذا بلغ النصاب الشرعي وهو ما يعادل 85 جراماً من الذهب عيار 24، وحال عليه الحول (سنة هجرية كاملة)، وتكون نسبة الزكاة الواجبة 2.5% من قيمة الذهب المملوك. يُستثنى من ذلك الذهب المستخدم للزينة الشخصية بحسب رأي بعض أهل العلم، بينما يرى آخرون وجوب الزكاة فيه أيضاً. يُنصح دائماً بالرجوع إلى جهة إفتاء موثوقة لمعرفة الحكم الدقيق بحسب حالتكم الخاصة.",
+about_title:"من نحن",about_text:"ZAHAB RATE منصة متخصصة في تقديم أسعار الذهب بالتجزئة لحظياً في دبي والسعودية ومصر، إلى جانب أدوات ذكية لحساب قيمة الذهب والزكاة الشرعية وتحويل العملات الرقمية. نسعى لتمكين مستخدمينا من اتخاذ قرارات مالية مدروسة عبر بيانات دقيقة وواجهة سهلة الاستخدام تدعم عدة لغات حول العالم.",
+services_title:"خدماتنا",service1_title:"متابعة الأسعار المباشرة",service1_desc:"شاشات محدثة تلقائياً لأسعار الذهب في دبي والسعودية ومصر على مدار اليوم.",service2_title:"الحاسبات الذكية",service2_desc:"حاسبات دقيقة للذهب والزكاة الشرعية والعملات الرقمية تساعدك على اتخاذ القرار الصحيح.",service3_title:"إصدارات رقمية تعليمية",service3_desc:"كتب رقمية متخصصة في الاستثمار في الذهب ومبادئ المالية الإسلامية.",
+books_title:"الكتب الرقمية",books_text:"استكشف مجموعتنا من الكتب الرقمية المتخصصة في استراتيجيات الاستثمار في الذهب وتحليل الأسواق ومبادئ المالية الإسلامية.",books_cta:"تصفح المكتبة",
+terms_title:"سياسة الاستخدام",terms_text:"باستخدامك لموقع ZAHAB RATE فإنك توافق على استخدام المحتوى والأدوات المتاحة لأغراض إعلامية وتعليمية فقط. الأسعار المعروضة تقديرية وقد تختلف عن أسعار السوق الفعلية لدى محال الصاغة. يلتزم المستخدم بعدم إساءة استخدام الموقع أو محاولة التلاعب بأدواته أو نسخ محتواه دون إذن.",
+disclaimer_title:"إخلاء المسؤولية القانونية",disclaimer_text:"جميع الأسعار والبيانات والحاسبات المعروضة في هذا الموقع هي لأغراض استرشادية وتعليمية فقط، ولا تُعد نصيحة مالية أو شرعية أو استثمارية. لا تتحمل إدارة ZAHAB RATE أي مسؤولية عن أي قرارات مالية أو شرعية تُتخذ بناءً على المعلومات الواردة في الموقع. يُنصح دوماً بالرجوع إلى مستشار مالي مرخص أو جهة إفتاء معتمدة قبل اتخاذ أي قرار.",
+contact_title:"تواصل معنا",contact_text:"لأي استفسارات أو شراكات أو دعم فني، يسعدنا تواصلكم معنا عبر البريد الإلكتروني.",footer_rights:"© 2026 ZAHAB RATE. جميع الحقوق محفوظة."},
 
-    // تعبئة البيانات
-    const cryptoData = [{n:"Bitcoin",v:65000},{n:"Ethereum",v:3500},{n:"USDT",v:1},{n:"XRP",v:0.5}];
-    cryptoData.forEach(c => document.getElementById('cryptoSelect').innerHTML += `<option value="${c.v}">${c.n}</option>`);
-    for(let i=0; i<=70; i+=5) document.getElementById('labor').innerHTML += `<option value="${i/100}">مصنعية ${i}%</option>`;
-    for(let i=0; i<=50; i+=5) document.getElementById('tax').innerHTML += `<option value="${i/100}">ضريبة ${i}%</option>`;
+en:{brand_tag:"Live Gold Rates",nav_home:"Home",nav_calculators:"Calculators",nav_about:"About Us",nav_services:"Services",nav_books:"Digital Books",nav_terms:"Terms of Use",nav_contact:"Contact",
+eyebrow:"Gold & Crypto Platform",hero_title:"Live Gold & Cryptocurrency Rates",hero_subtitle:"Track live retail gold prices in Dubai, Saudi Arabia and Egypt, and use our smart calculators for gold, zakat and cryptocurrency.",
+prices_title:"Live Gold Price Screens",prices_sub:"Prices auto-update every few seconds",price_dubai:"Gold Price - Dubai (AED)",price_ksa:"Gold Price - Saudi Arabia (SAR)",price_egypt:"Gold Price - Egypt (EGP)",updated_label:"Last updated:",
+calc_title:"Smart Calculators",calc_sub:"Accurately calculate gold value, zakat and cryptocurrency",
+gold_calc_title:"Gold Calculator",market_label:"Market",opt_dubai:"Dubai (AED)",opt_ksa:"Saudi Arabia (SAR)",opt_egypt:"Egypt (EGP)",karat_label:"Karat",weight_label:"Weight (grams)",tax_label:"Tax",making_label:"Making Charge",calculate_btn:"Calculate",result_label:"Total:",
+zakat_calc_title:"Zakat Calculator",zakat_amount_label:"Gold you own (grams)",nisab_note:"Shariah Nisab: 85 grams of 24K gold",zakat_result_label:"Zakat Due:",zakat_due:"Zakat is due",zakat_not_due:"Below nisab - no zakat due",
+crypto_calc_title:"Cryptocurrency Calculator",coin_label:"Coin",amount_label:"Amount",currency_label:"Convert to",crypto_result_label:"Value:",
+zakat_info_title:"About Zakat on Gold",zakat_info_text:"Zakat becomes due on gold once it reaches the Shariah nisab, equivalent to 85 grams of 24K gold, and a full lunar year (Hawl) has passed while owning it. The due rate is 2.5% of the gold's value. Some scholars exempt gold used for personal adornment, while others hold that zakat is still due on it. It is always advisable to consult a trusted Islamic authority for a precise ruling in your specific case.",
+about_title:"About Us",about_text:"ZAHAB RATE is a dedicated platform providing live retail gold prices in Dubai, Saudi Arabia and Egypt, alongside smart tools to calculate gold value, Shariah zakat and cryptocurrency conversions. We aim to empower our users to make informed financial decisions through accurate data and an easy-to-use interface supporting multiple languages worldwide.",
+services_title:"Our Services",service1_title:"Live Rate Tracking",service1_desc:"Automatically updated gold price screens for Dubai, Saudi Arabia and Egypt around the clock.",service2_title:"Smart Calculators",service2_desc:"Precise calculators for gold, Shariah zakat and cryptocurrency to help you make the right decision.",service3_title:"Educational Digital Publications",service3_desc:"Digital books specialized in gold investment and Islamic finance principles.",
+books_title:"Digital Books",books_text:"Explore our collection of digital books covering gold investment strategies, market analysis and Islamic finance principles.",books_cta:"Browse Library",
+terms_title:"Terms of Use",terms_text:"By using the ZAHAB RATE website, you agree to use the available content and tools for informational and educational purposes only. Displayed prices are indicative and may differ from actual prices at jewelry shops. Users agree not to misuse the site, tamper with its tools, or copy its content without permission.",
+disclaimer_title:"Legal Disclaimer",disclaimer_text:"All prices, data and calculators displayed on this website are for guidance and educational purposes only and do not constitute financial, Shariah or investment advice. ZAHAB RATE management bears no responsibility for any financial or Shariah decisions made based on the information provided. It is always recommended to consult a licensed financial advisor or accredited Islamic authority before making any decision.",
+contact_title:"Contact Us",contact_text:"For any inquiries, partnerships or technical support, we would be happy to hear from you via email.",footer_rights:"© 2026 ZAHAB RATE. All rights reserved."},
+
+fr:{brand_tag:"Cours de l'or en direct",nav_home:"Accueil",nav_calculators:"Calculatrices",nav_about:"À propos",nav_services:"Services",nav_books:"Livres numériques",nav_terms:"Conditions d'utilisation",nav_contact:"Contact",
+eyebrow:"Plateforme Or & Crypto",hero_title:"Cours de l'or et des cryptomonnaies en direct",hero_subtitle:"Suivez les prix de détail de l'or à Dubaï, en Arabie Saoudite et en Égypte, et utilisez nos calculatrices intelligentes pour l'or, la zakat et les cryptomonnaies.",
+prices_title:"Écrans des prix de l'or en direct",prices_sub:"Les prix se mettent à jour automatiquement toutes les quelques secondes",price_dubai:"Prix de l'or - Dubaï (AED)",price_ksa:"Prix de l'or - Arabie Saoudite (SAR)",price_egypt:"Prix de l'or - Égypte (EGP)",updated_label:"Dernière mise à jour :",
+calc_title:"Calculatrices intelligentes",calc_sub:"Calculez avec précision la valeur de l'or, la zakat et les cryptomonnaies",
+gold_calc_title:"Calculatrice de l'or",market_label:"Marché",opt_dubai:"Dubaï (AED)",opt_ksa:"Arabie Saoudite (SAR)",opt_egypt:"Égypte (EGP)",karat_label:"Carat",weight_label:"Poids (grammes)",tax_label:"Taxe",making_label:"Frais de façon",calculate_btn:"Calculer",result_label:"Total :",
+zakat_calc_title:"Calculatrice de la zakat",zakat_amount_label:"Or possédé (grammes)",nisab_note:"Nisab légal : 85 grammes d'or 24K",zakat_result_label:"Zakat due :",zakat_due:"La zakat est due",zakat_not_due:"Inférieur au nisab - aucune zakat due",
+crypto_calc_title:"Calculatrice de cryptomonnaies",coin_label:"Cryptomonnaie",amount_label:"Montant",currency_label:"Convertir en",crypto_result_label:"Valeur :",
+zakat_info_title:"À propos de la zakat sur l'or",zakat_info_text:"La zakat devient obligatoire sur l'or lorsqu'il atteint le nisab légal, équivalent à 85 grammes d'or 24K, et qu'une année lunaire complète (Hawl) s'est écoulée. Le taux dû est de 2,5% de la valeur de l'or possédé. Certains savants exemptent l'or utilisé comme parure personnelle, tandis que d'autres estiment que la zakat reste due. Il est toujours recommandé de consulter une autorité islamique fiable pour un avis précis selon votre situation.",
+about_title:"À propos de nous",about_text:"ZAHAB RATE est une plateforme dédiée qui propose les prix de détail de l'or en direct à Dubaï, en Arabie Saoudite et en Égypte, ainsi que des outils intelligents pour calculer la valeur de l'or, la zakat légale et les conversions de cryptomonnaies. Nous visons à permettre à nos utilisateurs de prendre des décisions financières éclairées grâce à des données précises et une interface facile à utiliser prenant en charge plusieurs langues.",
+services_title:"Nos services",service1_title:"Suivi des prix en direct",service1_desc:"Écrans de prix de l'or mis à jour automatiquement pour Dubaï, l'Arabie Saoudite et l'Égypte, 24h/24.",service2_title:"Calculatrices intelligentes",service2_desc:"Calculatrices précises pour l'or, la zakat légale et les cryptomonnaies pour vous aider à prendre la bonne décision.",service3_title:"Publications numériques éducatives",service3_desc:"Livres numériques spécialisés dans l'investissement en or et les principes de la finance islamique.",
+books_title:"Livres numériques",books_text:"Découvrez notre collection de livres numériques couvrant les stratégies d'investissement en or, l'analyse de marché et les principes de la finance islamique.",books_cta:"Parcourir la bibliothèque",
+terms_title:"Conditions d'utilisation",terms_text:"En utilisant le site ZAHAB RATE, vous acceptez d'utiliser le contenu et les outils disponibles à des fins uniquement informatives et éducatives. Les prix affichés sont indicatifs et peuvent différer des prix réels chez les bijoutiers. L'utilisateur s'engage à ne pas abuser du site, à ne pas altérer ses outils, ni à copier son contenu sans autorisation.",
+disclaimer_title:"Avertissement légal",disclaimer_text:"Tous les prix, données et calculatrices affichés sur ce site sont fournis à titre indicatif et éducatif uniquement et ne constituent pas un conseil financier, religieux ou d'investissement. La direction de ZAHAB RATE décline toute responsabilité quant aux décisions financières ou religieuses prises sur la base des informations fournies. Il est toujours recommandé de consulter un conseiller financier agréé ou une autorité islamique accréditée avant toute décision.",
+contact_title:"Contactez-nous",contact_text:"Pour toute question, partenariat ou support technique, nous serions ravis de vous entendre par e-mail.",footer_rights:"© 2026 ZAHAB RATE. Tous droits réservés."},
+
+ru:{brand_tag:"Курс золота в реальном времени",nav_home:"Главная",nav_calculators:"Калькуляторы",nav_about:"О нас",nav_services:"Услуги",nav_books:"Электронные книги",nav_terms:"Условия использования",nav_contact:"Контакты",
+eyebrow:"Платформа золота и криптовалют",hero_title:"Цены на золото и криптовалюту в реальном времени",hero_subtitle:"Следите за розничными ценами на золото в Дубае, Саудовской Аравии и Египте, используйте наши умные калькуляторы золота, закята и криптовалют.",
+prices_title:"Экраны цен на золото в реальном времени",prices_sub:"Цены автоматически обновляются каждые несколько секунд",price_dubai:"Цена золота — Дубай (AED)",price_ksa:"Цена золота — Саудовская Аравия (SAR)",price_egypt:"Цена золота — Египет (EGP)",updated_label:"Последнее обновление:",
+calc_title:"Умные калькуляторы",calc_sub:"Точно рассчитайте стоимость золота, закят и криптовалюту",
+gold_calc_title:"Калькулятор золота",market_label:"Рынок",opt_dubai:"Дубай (AED)",opt_ksa:"Саудовская Аравия (SAR)",opt_egypt:"Египет (EGP)",karat_label:"Проба",weight_label:"Вес (граммы)",tax_label:"Налог",making_label:"Стоимость работы",calculate_btn:"Рассчитать",result_label:"Итого:",
+zakat_calc_title:"Калькулятор закята",zakat_amount_label:"Золото, которым вы владеете (граммы)",nisab_note:"Нисаб по шариату: 85 граммов золота 24К",zakat_result_label:"Причитающийся закят:",zakat_due:"Закят обязателен",zakat_not_due:"Ниже нисаба — закят не обязателен",
+crypto_calc_title:"Калькулятор криптовалют",coin_label:"Монета",amount_label:"Количество",currency_label:"Конвертировать в",crypto_result_label:"Стоимость:",
+zakat_info_title:"О закяте с золота",zakat_info_text:"Закят с золота становится обязательным, когда оно достигает нисаба по шариату, равного 85 граммам золота 24К, при условии владения им полный лунный год (хавль). Ставка закята составляет 2,5% от стоимости золота. Некоторые учёные освобождают от закята золото, используемое как личное украшение, другие считают закят обязательным и в этом случае. Всегда рекомендуется обращаться к надёжному исламскому источнику за точным решением применительно к вашему случаю.",
+about_title:"О нас",about_text:"ZAHAB RATE — специализированная платформа, предоставляющая розничные цены на золото в реальном времени в Дубае, Саудовской Аравии и Египте, а также умные инструменты для расчёта стоимости золота, шариатского закята и конвертации криптовалют. Мы стремимся дать пользователям возможность принимать обоснованные финансовые решения благодаря точным данным и удобному интерфейсу на нескольких языках.",
+services_title:"Наши услуги",service1_title:"Отслеживание цен в реальном времени",service1_desc:"Автоматически обновляемые экраны цен на золото для Дубая, Саудовской Аравии и Египта круглосуточно.",service2_title:"Умные калькуляторы",service2_desc:"Точные калькуляторы золота, шариатского закята и криптовалют, помогающие принять верное решение.",service3_title:"Образовательные цифровые издания",service3_desc:"Электронные книги, посвящённые инвестициям в золото и принципам исламских финансов.",
+books_title:"Электронные книги",books_text:"Ознакомьтесь с нашей коллекцией электронных книг об инвестиционных стратегиях в золото, анализе рынка и принципах исламских финансов.",books_cta:"Перейти в библиотеку",
+terms_title:"Условия использования",terms_text:"Используя сайт ZAHAB RATE, вы соглашаетесь использовать доступный контент и инструменты исключительно в информационных и образовательных целях. Указанные цены являются ориентировочными и могут отличаться от фактических цен у ювелиров. Пользователь обязуется не злоупотреблять сайтом, не вмешиваться в работу его инструментов и не копировать контент без разрешения.",
+disclaimer_title:"Юридический отказ от ответственности",disclaimer_text:"Все цены, данные и калькуляторы, представленные на этом сайте, предназначены исключительно для информационных и образовательных целей и не являются финансовой, религиозной или инвестиционной консультацией. Руководство ZAHAB RATE не несёт ответственности за какие-либо финансовые или религиозные решения, принятые на основе представленной информации. Всегда рекомендуется проконсультироваться с лицензированным финансовым консультантом или аккредитованным исламским органом перед принятием решения.",
+contact_title:"Свяжитесь с нами",contact_text:"По любым вопросам, партнёрству или технической поддержке будем рады получить от вас письмо по электронной почте.",footer_rights:"© 2026 ZAHAB RATE. Все права защищены."},
+
+hi:{brand_tag:"लाइव सोने की कीमतें",nav_home:"होम",nav_calculators:"कैलकुलेटर",nav_about:"हमारे बारे में",nav_services:"सेवाएं",nav_books:"डिजिटल किताबें",nav_terms:"उपयोग की शर्तें",nav_contact:"संपर्क करें",
+eyebrow:"सोना और क्रिप्टो प्लेटफ़ॉर्म",hero_title:"सोने और क्रिप्टोकरेंसी की लाइव कीमतें",hero_subtitle:"दुबई, सऊदी अरब और मिस्र में सोने की खुदरा कीमतों को लाइव देखें, और सोने, ज़कात व क्रिप्टोकरेंसी के लिए हमारे स्मार्ट कैलकुलेटर का उपयोग करें।",
+prices_title:"लाइव सोने की कीमत स्क्रीनें",prices_sub:"कीमतें हर कुछ सेकंड में अपने आप अपडेट होती हैं",price_dubai:"सोने की कीमत - दुबई (AED)",price_ksa:"सोने की कीमत - सऊदी अरब (SAR)",price_egypt:"सोने की कीमत - मिस्र (EGP)",updated_label:"अंतिम अपडेट:",
+calc_title:"स्मार्ट कैलकुलेटर",calc_sub:"सोने के मूल्य, ज़कात और क्रिप्टोकरेंसी की सटीक गणना करें",
+gold_calc_title:"सोना कैलकुलेटर",market_label:"बाज़ार",opt_dubai:"दुबई (AED)",opt_ksa:"सऊदी अरब (SAR)",opt_egypt:"मिस्र (EGP)",karat_label:"कैरेट",weight_label:"वज़न (ग्राम)",tax_label:"कर",making_label:"मेकिंग चार्ज",calculate_btn:"गणना करें",result_label:"कुल:",
+zakat_calc_title:"ज़कात कैलकुलेटर",zakat_amount_label:"आपके पास कितना सोना है (ग्राम)",nisab_note:"शरई निसाब: 85 ग्राम 24K सोना",zakat_result_label:"देय ज़कात:",zakat_due:"ज़कात देय है",zakat_not_due:"निसाब से कम - ज़कात देय नहीं",
+crypto_calc_title:"क्रिप्टोकरेंसी कैलकुलेटर",coin_label:"कॉइन",amount_label:"मात्रा",currency_label:"में बदलें",crypto_result_label:"मूल्य:",
+zakat_info_title:"सोने की ज़कात के बारे में",zakat_info_text:"सोने पर ज़कात तब देय होती है जब वह शरई निसाब यानी 24K सोने के 85 ग्राम के बराबर हो जाए, और उस पर एक पूरा चंद्र वर्ष (हौल) गुज़र जाए। देय दर सोने के मूल्य का 2.5% है। कुछ विद्वान व्यक्तिगत श्रृंगार के लिए इस्तेमाल किए जाने वाले सोने को छूट देते हैं, जबकि अन्य मानते हैं कि उस पर भी ज़कात देय है। अपनी विशेष स्थिति के अनुसार सटीक फ़तवे के लिए हमेशा किसी विश्वसनीय इस्लामी प्राधिकरण से सलाह लें।",
+about_title:"हमारे बारे में",about_text:"ZAHAB RATE एक समर्पित मंच है जो दुबई, सऊदी अरब और मिस्र में सोने की खुदरा कीमतें लाइव प्रदान करता है, साथ ही सोने के मूल्य, शरई ज़कात और क्रिप्टोकरेंसी रूपांतरण की गणना के लिए स्मार्ट उपकरण भी। हमारा लक्ष्य सटीक डेटा और कई भाषाओं में उपलब्ध उपयोग में आसान इंटरफ़ेस के माध्यम से उपयोगकर्ताओं को सूचित वित्तीय निर्णय लेने में सक्षम बनाना है।",
+services_title:"हमारी सेवाएं",service1_title:"लाइव दर ट्रैकिंग",service1_desc:"दुबई, सऊदी अरब और मिस्र के लिए चौबीसों घंटे स्वतः अपडेट होने वाली सोने की कीमत स्क्रीनें।",service2_title:"स्मार्ट कैलकुलेटर",service2_desc:"सही निर्णय लेने में मदद के लिए सोना, शरई ज़कात और क्रिप्टोकरेंसी के सटीक कैलकुलेटर।",service3_title:"शैक्षिक डिजिटल प्रकाशन",service3_desc:"सोने में निवेश और इस्लामी वित्त के सिद्धांतों पर केंद्रित डिजिटल किताबें।",
+books_title:"डिजिटल किताबें",books_text:"सोने में निवेश की रणनीतियों, बाज़ार विश्लेषण और इस्लामी वित्त के सिद्धांतों को कवर करने वाली हमारी डिजिटल पुस्तकों का संग्रह देखें।",books_cta:"लाइब्रेरी देखें",
+terms_title:"उपयोग की शर्तें",terms_text:"ZAHAB RATE वेबसाइट का उपयोग करके, आप सहमत होते हैं कि उपलब्ध सामग्री और उपकरणों का उपयोग केवल सूचना और शैक्षिक उद्देश्यों के लिए करेंगे। प्रदर्शित कीमतें अनुमानित हैं और सुनार की वास्तविक कीमतों से भिन्न हो सकती हैं। उपयोगकर्ता वेबसाइट का दुरुपयोग न करने, उसके उपकरणों से छेड़छाड़ न करने और बिना अनुमति सामग्री की नकल न करने के लिए सहमत है।",
+disclaimer_title:"कानूनी अस्वीकरण",disclaimer_text:"इस वेबसाइट पर दिखाई गई सभी कीमतें, डेटा और कैलकुलेटर केवल मार्गदर्शन और शैक्षिक उद्देश्यों के लिए हैं और यह वित्तीय, धार्मिक या निवेश सलाह नहीं है। ZAHAB RATE प्रबंधन प्रदान की गई जानकारी के आधार पर लिए गए किसी भी वित्तीय या धार्मिक निर्णय के लिए ज़िम्मेदार नहीं है। किसी भी निर्णय से पहले हमेशा एक लाइसेंस प्राप्त वित्तीय सलाहकार या मान्यता प्राप्त इस्लामी प्राधिकरण से परामर्श करने की सलाह दी जाती है।",
+contact_title:"संपर्क करें",contact_text:"किसी भी पूछताछ, साझेदारी या तकनीकी सहायता के लिए, हमें ईमेल के माध्यम से आपसे सुनकर खुशी होगी।",footer_rights:"© 2026 ZAHAB RATE. सर्वाधिकार सुरक्षित।"},
+
+ur:{brand_tag:"سونے کی لائیو قیمتیں",nav_home:"ہوم",nav_calculators:"کیلکولیٹرز",nav_about:"ہمارے بارے میں",nav_services:"خدمات",nav_books:"ڈیجیٹل کتابیں",nav_terms:"استعمال کی شرائط",nav_contact:"رابطہ کریں",
+eyebrow:"سونا اور کرپٹو پلیٹ فارم",hero_title:"سونے اور کرپٹو کرنسی کی لائیو قیمتیں",hero_subtitle:"دبئی، سعودی عرب اور مصر میں سونے کی خوردہ قیمتوں کو لائیو دیکھیں، اور سونے، زکوٰۃ اور کرپٹو کرنسی کے لیے ہمارے سمارٹ کیلکولیٹرز استعمال کریں۔",
+prices_title:"سونے کی لائیو قیمت اسکرینز",prices_sub:"قیمتیں ہر چند سیکنڈ بعد خودکار طور پر اپڈیٹ ہوتی ہیں",price_dubai:"سونے کی قیمت - دبئی (درہم)",price_ksa:"سونے کی قیمت - سعودی عرب (ریال)",price_egypt:"سونے کی قیمت - مصر (پاؤنڈ)",updated_label:"آخری اپڈیٹ:",
+calc_title:"سمارٹ کیلکولیٹرز",calc_sub:"سونے کی قیمت، زکوٰۃ اور کرپٹو کرنسی کا درست حساب لگائیں",
+gold_calc_title:"سونا کیلکولیٹر",market_label:"مارکیٹ",opt_dubai:"دبئی (درہم)",opt_ksa:"سعودی عرب (ریال)",opt_egypt:"مصر (پاؤنڈ)",karat_label:"قیراط",weight_label:"وزن (گرام)",tax_label:"ٹیکس",making_label:"میکنگ چارج",calculate_btn:"حساب کریں",result_label:"کل:",
+zakat_calc_title:"زکوٰۃ کیلکولیٹر",zakat_amount_label:"آپ کے پاس موجود سونا (گرام)",nisab_note:"شرعی نصاب: 85 گرام 24 قیراط سونا",zakat_result_label:"واجب الادا زکوٰۃ:",zakat_due:"زکوٰۃ واجب ہے",zakat_not_due:"نصاب سے کم - زکوٰۃ واجب نہیں",
+crypto_calc_title:"کرپٹو کرنسی کیلکولیٹر",coin_label:"کوائن",amount_label:"مقدار",currency_label:"تبدیل کریں بہ",crypto_result_label:"قیمت:",
+zakat_info_title:"سونے کی زکوٰۃ کے احکام",zakat_info_text:"سونے پر زکوٰۃ اس وقت واجب ہوتی ہے جب وہ شرعی نصاب یعنی 24 قیراط سونے کے 85 گرام کے برابر ہو جائے، اور اس پر ایک مکمل قمری سال (حول) گزر جائے۔ واجب الادا شرح سونے کی قیمت کا 2.5 فیصد ہے۔ بعض علماء ذاتی زیبائش کے لیے استعمال ہونے والے سونے کو مستثنیٰ قرار دیتے ہیں، جبکہ دیگر کے نزدیک اس پر بھی زکوٰۃ واجب ہے۔ اپنے مخصوص حالات کے مطابق درست فتویٰ کے لیے ہمیشہ کسی قابل اعتماد اسلامی ادارے سے رجوع کریں۔",
+about_title:"ہمارے بارے میں",about_text:"ZAHAB RATE ایک مخصوص پلیٹ فارم ہے جو دبئی، سعودی عرب اور مصر میں سونے کی خوردہ قیمتیں لائیو فراہم کرتا ہے، ساتھ ہی سونے کی قیمت، شرعی زکوٰۃ اور کرپٹو کرنسی کنورژن کا حساب لگانے کے لیے سمارٹ ٹولز بھی۔ ہمارا مقصد درست ڈیٹا اور متعدد زبانوں میں دستیاب آسان انٹرفیس کے ذریعے صارفین کو باخبر مالی فیصلے کرنے کے قابل بنانا ہے۔",
+services_title:"ہماری خدمات",service1_title:"لائیو ریٹ ٹریکنگ",service1_desc:"دبئی، سعودی عرب اور مصر کے لیے چوبیس گھنٹے خودکار اپڈیٹ ہونے والی سونے کی قیمت اسکرینز۔",service2_title:"سمارٹ کیلکولیٹرز",service2_desc:"صحیح فیصلہ کرنے میں مدد کے لیے سونا، شرعی زکوٰۃ اور کرپٹو کرنسی کے درست کیلکولیٹرز۔",service3_title:"تعلیمی ڈیجیٹل اشاعتیں",service3_desc:"سونے میں سرمایہ کاری اور اسلامی فنانس کے اصولوں پر مبنی ڈیجیٹل کتابیں۔",
+books_title:"ڈیجیٹل کتابیں",books_text:"سونے میں سرمایہ کاری کی حکمت عملیوں، مارکیٹ تجزیے اور اسلامی فنانس کے اصولوں پر مشتمل ہماری ڈیجیٹل کتابوں کا مجموعہ دیکھیں۔",books_cta:"لائبریری دیکھیں",
+terms_title:"استعمال کی شرائط",terms_text:"ZAHAB RATE ویب سائٹ استعمال کر کے، آپ اس بات پر رضامند ہوتے ہیں کہ دستیاب مواد اور ٹولز کو صرف معلوماتی اور تعلیمی مقاصد کے لیے استعمال کریں گے۔ ظاہر کردہ قیمتیں تخمینی ہیں اور سنار کی اصل قیمتوں سے مختلف ہو سکتی ہیں۔ صارف ویب سائٹ کے غلط استعمال، اس کے ٹولز سے چھیڑ چھاڑ، یا بغیر اجازت مواد کاپی نہ کرنے پر رضامند ہے۔",
+disclaimer_title:"قانونی دستبرداری",disclaimer_text:"اس ویب سائٹ پر دکھائی گئی تمام قیمتیں، ڈیٹا اور کیلکولیٹرز صرف رہنمائی اور تعلیمی مقاصد کے لیے ہیں اور یہ مالی، شرعی یا سرمایہ کاری کا مشورہ نہیں ہیں۔ ZAHAB RATE انتظامیہ فراہم کردہ معلومات کی بنیاد پر کیے گئے کسی بھی مالی یا شرعی فیصلے کی ذمہ دار نہیں ہے۔ کوئی بھی فیصلہ کرنے سے پہلے ہمیشہ لائسنس یافتہ مالیاتی مشیر یا تسلیم شدہ اسلامی ادارے سے رجوع کرنے کا مشورہ دیا جاتا ہے۔",
+contact_title:"رابطہ کریں",contact_text:"کسی بھی استفسار، شراکت داری یا تکنیکی معاونت کے لیے، ہمیں ای میل کے ذریعے آپ سے سن کر خوشی ہوگی۔",footer_rights:"© 2026 ZAHAB RATE۔ جملہ حقوق محفوظ ہیں۔"},
+
+zh:{brand_tag:"黄金实时价格",nav_home:"首页",nav_calculators:"计算器",nav_about:"关于我们",nav_services:"服务",nav_books:"电子书",nav_terms:"使用条款",nav_contact:"联系我们",
+eyebrow:"黄金与加密货币平台",hero_title:"黄金与加密货币实时价格",hero_subtitle:"实时追踪迪拜、沙特阿拉伯和埃及的黄金零售价格，并使用我们的智能计算器计算黄金、天课（Zakat）和加密货币。",
+prices_title:"黄金实时价格屏幕",prices_sub:"价格每隔几秒自动更新",price_dubai:"黄金价格 - 迪拜（迪拉姆）",price_ksa:"黄金价格 - 沙特阿拉伯（里亚尔）",price_egypt:"黄金价格 - 埃及（镑）",updated_label:"最后更新：",
+calc_title:"智能计算器",calc_sub:"精确计算黄金价值、天课和加密货币",
+gold_calc_title:"黄金计算器",market_label:"市场",opt_dubai:"迪拜（迪拉姆）",opt_ksa:"沙特阿拉伯（里亚尔）",opt_egypt:"埃及（镑）",karat_label:"成色",weight_label:"重量（克）",tax_label:"税费",making_label:"加工费",calculate_btn:"计算",result_label:"总计：",
+zakat_calc_title:"天课计算器",zakat_amount_label:"您持有的黄金（克）",nisab_note:"合法起征点：85克24K黄金",zakat_result_label:"应缴天课：",zakat_due:"需缴纳天课",zakat_not_due:"低于起征点 - 无需缴纳天课",
+crypto_calc_title:"加密货币计算器",coin_label:"币种",amount_label:"数量",currency_label:"转换为",crypto_result_label:"价值：",
+zakat_info_title:"关于黄金天课的说明",zakat_info_text:"当黄金达到合法起征点（相当于85克24K黄金），并持有满一个完整的伊斯兰历年（哈屋勒）后，即需缴纳天课，税率为黄金价值的2.5%。部分学者认为个人佩戴的首饰黄金可免税，也有学者认为仍需缴纳。建议您始终咨询可靠的伊斯兰权威机构，以根据您的具体情况获得准确裁决。",
+about_title:"关于我们",about_text:"ZAHAB RATE 是一个专注于提供迪拜、沙特阿拉伯和埃及实时黄金零售价格的平台，同时提供智能工具用于计算黄金价值、伊斯兰天课以及加密货币兑换。我们致力于通过精准的数据和支持多种语言的易用界面，帮助用户做出明智的财务决策。",
+services_title:"我们的服务",service1_title:"实时价格追踪",service1_desc:"全天候自动更新的迪拜、沙特阿拉伯和埃及黄金价格屏幕。",service2_title:"智能计算器",service2_desc:"精确的黄金、伊斯兰天课和加密货币计算器，帮助您做出正确决策。",service3_title:"教育类电子出版物",service3_desc:"专注于黄金投资与伊斯兰金融原则的电子书。",
+books_title:"电子书",books_text:"探索我们涵盖黄金投资策略、市场分析和伊斯兰金融原则的电子书系列。",books_cta:"浏览图书馆",
+terms_title:"使用条款",terms_text:"使用 ZAHAB RATE 网站即表示您同意仅将可用内容和工具用于信息和教育目的。所显示的价格仅供参考，可能与金店的实际价格有所不同。用户同意不滥用本网站、不篡改其工具，也不得未经许可复制其内容。",
+disclaimer_title:"法律免责声明",disclaimer_text:"本网站显示的所有价格、数据和计算器仅供参考和教育之用，不构成财务、宗教或投资建议。ZAHAB RATE 管理层对基于本网站信息做出的任何财务或宗教决定概不负责。在做出任何决定之前，始终建议咨询持牌财务顾问或权威伊斯兰机构。",
+contact_title:"联系我们",contact_text:"如有任何咨询、合作或技术支持需求，欢迎通过电子邮件与我们联系。",footer_rights:"© 2026 ZAHAB RATE。保留所有权利。"},
+
+uk:{brand_tag:"Ціна на золото в реальному часі",nav_home:"Головна",nav_calculators:"Калькулятори",nav_about:"Про нас",nav_services:"Послуги",nav_books:"Електронні книги",nav_terms:"Умови використання",nav_contact:"Контакти",
+eyebrow:"Платформа золота та криптовалют",hero_title:"Ціни на золото та криптовалюту в реальному часі",hero_subtitle:"Слідкуйте за роздрібними цінами на золото в Дубаї, Саудівській Аравії та Єгипті, використовуйте наші розумні калькулятори золота, закяту та криптовалют.",
+prices_title:"Екрани цін на золото в реальному часі",prices_sub:"Ціни автоматично оновлюються кожні кілька секунд",price_dubai:"Ціна золота — Дубай (AED)",price_ksa:"Ціна золота — Саудівська Аравія (SAR)",price_egypt:"Ціна золота — Єгипет (EGP)",updated_label:"Останнє оновлення:",
+calc_title:"Розумні калькулятори",calc_sub:"Точно розрахуйте вартість золота, закят та криптовалюту",
+gold_calc_title:"Калькулятор золота",market_label:"Ринок",opt_dubai:"Дубай (AED)",opt_ksa:"Саудівська Аравія (SAR)",opt_egypt:"Єгипет (EGP)",karat_label:"Проба",weight_label:"Вага (грами)",tax_label:"Податок",making_label:"Вартість роботи",calculate_btn:"Розрахувати",result_label:"Разом:",
+zakat_calc_title:"Калькулятор закяту",zakat_amount_label:"Золото, яким ви володієте (грами)",nisab_note:"Нісаб за шаріатом: 85 грамів золота 24К",zakat_result_label:"Закят до сплати:",zakat_due:"Закят обов'язковий",zakat_not_due:"Нижче нісабу — закят не обов'язковий",
+crypto_calc_title:"Калькулятор криптовалют",coin_label:"Монета",amount_label:"Кількість",currency_label:"Конвертувати в",crypto_result_label:"Вартість:",
+zakat_info_title:"Про закят із золота",zakat_info_text:"Закят із золота стає обов'язковим, коли воно досягає нісабу за шаріатом, що дорівнює 85 грамам золота 24К, за умови володіння ним протягом повного місячного року (хаул). Ставка закяту становить 2,5% від вартості золота. Деякі вчені звільняють від закяту золото, яке використовується як особиста прикраса, інші вважають закят обов'язковим і в цьому випадку. Завжди рекомендується звертатися до надійного ісламського органу за точним рішенням для вашого випадку.",
+about_title:"Про нас",about_text:"ZAHAB RATE — спеціалізована платформа, що надає роздрібні ціни на золото в реальному часі в Дубаї, Саудівській Аравії та Єгипті, а також розумні інструменти для розрахунку вартості золота, шаріатського закяту та конвертації криптовалют. Ми прагнемо надати користувачам можливість приймати обґрунтовані фінансові рішення завдяки точним даним та зручному інтерфейсу кількома мовами.",
+services_title:"Наші послуги",service1_title:"Відстеження цін у реальному часі",service1_desc:"Автоматично оновлювані екрани цін на золото для Дубая, Саудівської Аравії та Єгипту цілодобово.",service2_title:"Розумні калькулятори",service2_desc:"Точні калькулятори золота, шаріатського закяту та криптовалют, які допоможуть прийняти правильне рішення.",service3_title:"Освітні цифрові видання",service3_desc:"Електронні книги, присвячені інвестиціям у золото та принципам ісламських фінансів.",
+books_title:"Електронні книги",books_text:"Ознайомтеся з нашою колекцією електронних книг про стратегії інвестування в золото, аналіз ринку та принципи ісламських фінансів.",books_cta:"Переглянути бібліотеку",
+terms_title:"Умови використання",terms_text:"Використовуючи сайт ZAHAB RATE, ви погоджуєтеся використовувати доступний контент та інструменти виключно в інформаційних та освітніх цілях. Відображені ціни є орієнтовними і можуть відрізнятися від фактичних цін у ювелірів. Користувач зобов'язується не зловживати сайтом, не втручатися в роботу його інструментів та не копіювати контент без дозволу.",
+disclaimer_title:"Юридична відмова від відповідальності",disclaimer_text:"Усі ціни, дані та калькулятори, представлені на цьому сайті, призначені виключно для інформаційних та освітніх цілей і не є фінансовою, релігійною чи інвестиційною консультацією. Керівництво ZAHAB RATE не несе відповідальності за будь-які фінансові чи релігійні рішення, прийняті на основі наданої інформації. Завжди рекомендується консультуватися з ліцензованим фінансовим консультантом або акредитованим ісламським органом перед прийняттям будь-якого рішення.",
+contact_title:"Зв'яжіться з нами",contact_text:"З будь-яких питань, партнерства чи технічної підтримки будемо раді почути від вас електронною поштою.",footer_rights:"© 2026 ZAHAB RATE. Усі права захищені."},
+
+tl:{brand_tag:"Live na Presyo ng Ginto",nav_home:"Home",nav_calculators:"Mga Calculator",nav_about:"Tungkol Sa Amin",nav_services:"Mga Serbisyo",nav_books:"Digital na mga Libro",nav_terms:"Mga Tuntunin ng Paggamit",nav_contact:"Makipag-ugnayan",
+eyebrow:"Platform ng Ginto at Crypto",hero_title:"Live na Presyo ng Ginto at Cryptocurrency",hero_subtitle:"Subaybayan ang live na retail na presyo ng ginto sa Dubai, Saudi Arabia at Egypt, at gamitin ang aming matalinong calculator para sa ginto, zakat at cryptocurrency.",
+prices_title:"Live na Screen ng Presyo ng Ginto",prices_sub:"Awtomatikong nag-a-update ang presyo kada ilang segundo",price_dubai:"Presyo ng Ginto - Dubai (AED)",price_ksa:"Presyo ng Ginto - Saudi Arabia (SAR)",price_egypt:"Presyo ng Ginto - Egypt (EGP)",updated_label:"Huling na-update:",
+calc_title:"Matatalinong Calculator",calc_sub:"Kalkulahin nang tama ang halaga ng ginto, zakat at cryptocurrency",
+gold_calc_title:"Calculator ng Ginto",market_label:"Merkado",opt_dubai:"Dubai (AED)",opt_ksa:"Saudi Arabia (SAR)",opt_egypt:"Egypt (EGP)",karat_label:"Karat",weight_label:"Timbang (gramo)",tax_label:"Buwis",making_label:"Making Charge",calculate_btn:"Kalkulahin",result_label:"Kabuuan:",
+zakat_calc_title:"Calculator ng Zakat",zakat_amount_label:"Ginto na pag-aari mo (gramo)",nisab_note:"Nisab ayon sa Shariah: 85 gramo ng 24K na ginto",zakat_result_label:"Dapat bayarang Zakat:",zakat_due:"Kailangang magbayad ng Zakat",zakat_not_due:"Mas mababa sa nisab - walang kailangang bayaran na zakat",
+crypto_calc_title:"Calculator ng Cryptocurrency",coin_label:"Coin",amount_label:"Halaga",currency_label:"I-convert sa",crypto_result_label:"Halaga:",
+zakat_info_title:"Tungkol sa Zakat ng Ginto",zakat_info_text:"Ang zakat ay nagiging obligado sa ginto kapag umabot ito sa nisab ayon sa Shariah, katumbas ng 85 gramo ng 24K na ginto, at lumipas na ang isang buong lunar year (Hawl) habang pagmamay-ari ito. Ang rate na dapat bayaran ay 2.5% ng halaga ng ginto. Ipinagpapaliban ng ilang iskolar ang ginto na ginagamit bilang personal na alahas, habang ang iba naman ay naniniwalang kailangan pa ring bayaran ang zakat dito. Palaging inirerekomenda na kumunsulta sa isang mapagkakatiwalaang awtoridad ng Islam para sa tumpak na desisyon batay sa inyong sitwasyon.",
+about_title:"Tungkol Sa Amin",about_text:"Ang ZAHAB RATE ay isang platform na nakalaan sa pagbibigay ng live na retail na presyo ng ginto sa Dubai, Saudi Arabia at Egypt, kasama ang matatalinong tool para sa pagkalkula ng halaga ng ginto, Shariah zakat at pag-convert ng cryptocurrency. Layunin naming bigyang-kapangyarihan ang aming mga user na makagawa ng may-kaalamang desisyong pinansyal sa pamamagitan ng tumpak na datos at madaling gamitin na interface na sumusuporta sa maraming wika sa buong mundo.",
+services_title:"Aming mga Serbisyo",service1_title:"Live na Pagsubaybay ng Presyo",service1_desc:"Awtomatikong na-a-update na screen ng presyo ng ginto para sa Dubai, Saudi Arabia at Egypt sa buong araw.",service2_title:"Matatalinong Calculator",service2_desc:"Tumpak na calculator para sa ginto, Shariah zakat at cryptocurrency upang matulungan kang gumawa ng tamang desisyon.",service3_title:"Edukasyonal na Digital na Publikasyon",service3_desc:"Digital na mga libro na dalubhasa sa pamumuhunan sa ginto at mga prinsipyo ng Islamic finance.",
+books_title:"Digital na mga Libro",books_text:"Tuklasin ang aming koleksyon ng digital na mga libro na sumasaklaw sa mga estratehiya sa pamumuhunan sa ginto, pagsusuri ng merkado at mga prinsipyo ng Islamic finance.",books_cta:"Tingnan ang Library",
+terms_title:"Mga Tuntunin ng Paggamit",terms_text:"Sa paggamit ng website ng ZAHAB RATE, sumasang-ayon kang gamitin ang available na nilalaman at mga tool para sa layuning pang-impormasyon at pang-edukasyon lamang. Ang mga presyong ipinapakita ay tinatayang halaga lamang at maaaring iba sa aktwal na presyo sa mga tindahan ng alahas. Sumasang-ayon ang user na hindi aabusuhin ang site, hindi gagalawin ang mga tool nito, o kokopyahin ang nilalaman nito nang walang pahintulot.",
+disclaimer_title:"Legal na Disclaimer",disclaimer_text:"Lahat ng presyo, datos at calculator na ipinapakita sa website na ito ay para sa gabay at layuning pang-edukasyon lamang at hindi bumubuo ng payo sa pananalapi, relihiyon o pamumuhunan. Ang pamamahala ng ZAHAB RATE ay hindi mananagot sa anumang desisyong pinansyal o relihiyoso na ginawa batay sa impormasyong ibinigay. Palaging inirerekomenda na kumunsulta sa isang lisensyadong financial advisor o akreditadong awtoridad ng Islam bago gumawa ng anumang desisyon.",
+contact_title:"Makipag-ugnayan",contact_text:"Para sa anumang katanungan, partnership o technical support, matutuwa kaming marinig mula sa inyo sa pamamagitan ng email.",footer_rights:"© 2026 ZAHAB RATE. Lahat ng karapatan ay nakalaan."},
+
+es:{brand_tag:"Precio del oro en vivo",nav_home:"Inicio",nav_calculators:"Calculadoras",nav_about:"Sobre nosotros",nav_services:"Servicios",nav_books:"Libros digitales",nav_terms:"Términos de uso",nav_contact:"Contacto",
+eyebrow:"Plataforma de oro y criptomonedas",hero_title:"Precios en vivo del oro y las criptomonedas",hero_subtitle:"Sigue en vivo los precios minoristas del oro en Dubái, Arabia Saudita y Egipto, y usa nuestras calculadoras inteligentes de oro, zakat y criptomonedas.",
+prices_title:"Pantallas de precios del oro en vivo",prices_sub:"Los precios se actualizan automáticamente cada pocos segundos",price_dubai:"Precio del oro - Dubái (AED)",price_ksa:"Precio del oro - Arabia Saudita (SAR)",price_egypt:"Precio del oro - Egipto (EGP)",updated_label:"Última actualización:",
+calc_title:"Calculadoras inteligentes",calc_sub:"Calcula con precisión el valor del oro, el zakat y las criptomonedas",
+gold_calc_title:"Calculadora de oro",market_label:"Mercado",opt_dubai:"Dubái (AED)",opt_ksa:"Arabia Saudita (SAR)",opt_egypt:"Egipto (EGP)",karat_label:"Quilates",weight_label:"Peso (gramos)",tax_label:"Impuesto",making_label:"Costo de elaboración",calculate_btn:"Calcular",result_label:"Total:",
+zakat_calc_title:"Calculadora de zakat",zakat_amount_label:"Oro que posees (gramos)",nisab_note:"Nisab legal: 85 gramos de oro de 24K",zakat_result_label:"Zakat adeudado:",zakat_due:"El zakat es obligatorio",zakat_not_due:"Por debajo del nisab - no se debe zakat",
+crypto_calc_title:"Calculadora de criptomonedas",coin_label:"Moneda",amount_label:"Cantidad",currency_label:"Convertir a",crypto_result_label:"Valor:",
+zakat_info_title:"Sobre el zakat del oro",zakat_info_text:"El zakat se hace obligatorio sobre el oro cuando alcanza el nisab legal, equivalente a 85 gramos de oro de 24K, y ha transcurrido un año lunar completo (Hawl) en su posesión. La tasa adeudada es del 2,5% del valor del oro. Algunos eruditos exceptúan el oro utilizado como adorno personal, mientras que otros consideran que el zakat sigue siendo obligatorio. Siempre se recomienda consultar a una autoridad islámica confiable para obtener un dictamen preciso según tu caso particular.",
+about_title:"Sobre nosotros",about_text:"ZAHAB RATE es una plataforma dedicada a ofrecer precios minoristas del oro en vivo en Dubái, Arabia Saudita y Egipto, junto con herramientas inteligentes para calcular el valor del oro, el zakat islámico y las conversiones de criptomonedas. Buscamos empoderar a nuestros usuarios para tomar decisiones financieras informadas mediante datos precisos y una interfaz fácil de usar que admite varios idiomas en todo el mundo.",
+services_title:"Nuestros servicios",service1_title:"Seguimiento de precios en vivo",service1_desc:"Pantallas de precios del oro actualizadas automáticamente para Dubái, Arabia Saudita y Egipto las 24 horas.",service2_title:"Calculadoras inteligentes",service2_desc:"Calculadoras precisas de oro, zakat islámico y criptomonedas para ayudarte a tomar la decisión correcta.",service3_title:"Publicaciones digitales educativas",service3_desc:"Libros digitales especializados en inversión en oro y principios de finanzas islámicas.",
+books_title:"Libros digitales",books_text:"Explora nuestra colección de libros digitales sobre estrategias de inversión en oro, análisis de mercado y principios de finanzas islámicas.",books_cta:"Explorar biblioteca",
+terms_title:"Términos de uso",terms_text:"Al utilizar el sitio web de ZAHAB RATE, aceptas usar el contenido y las herramientas disponibles únicamente con fines informativos y educativos. Los precios mostrados son indicativos y pueden diferir de los precios reales en las joyerías. El usuario se compromete a no hacer un uso indebido del sitio, no manipular sus herramientas ni copiar su contenido sin permiso.",
+disclaimer_title:"Aviso legal",disclaimer_text:"Todos los precios, datos y calculadoras mostrados en este sitio web son solo para fines orientativos y educativos y no constituyen asesoramiento financiero, religioso o de inversión. La administración de ZAHAB RATE no asume responsabilidad alguna por decisiones financieras o religiosas tomadas con base en la información proporcionada. Siempre se recomienda consultar a un asesor financiero autorizado o a una autoridad islámica acreditada antes de tomar cualquier decisión.",
+contact_title:"Contáctanos",contact_text:"Para cualquier consulta, colaboración o soporte técnico, estaremos encantados de saber de ti por correo electrónico.",footer_rights:"© 2026 ZAHAB RATE. Todos los derechos reservados."}
+};
+
+const rtlLangs = ["ar","ur"];
+
+function applyLang(lang){
+  const dict = translations[lang] || translations.ar;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if(dict[key] !== undefined) el.textContent = dict[key];
+  });
+  const dir = rtlLangs.includes(lang) ? "rtl" : "ltr";
+  document.documentElement.setAttribute("lang", lang);
+  document.documentElement.setAttribute("dir", dir);
+  document.body.setAttribute("data-dir", dir);
+  localStorage_lang = lang; // in-memory only, no browser storage used persistently across sessions
+}
+let localStorage_lang = "ar";
+
+document.getElementById("langSelect").addEventListener("change", e=> applyLang(e.target.value));
+document.getElementById("hamburger").addEventListener("click", ()=>{
+  document.getElementById("mainnav").classList.toggle("open");
+});
+
+/* ================= LIVE GOLD PRICES (simulated real-time feed) ================= */
+let gold = {
+  dubai: {base:308.4, price:308.4, prev:308.4, currency:"AED"},
+  ksa:   {base:311.8, price:311.8, prev:311.8, currency:"SAR"},
+  egypt: {base:4185,  price:4185,  prev:4185,  currency:"EGP"}
+};
+
+function fmtTime(){
+  const d = new Date();
+  return d.toLocaleTimeString();
+}
+
+function tickGold(){
+  Object.keys(gold).forEach(k=>{
+    const g = gold[k];
+    g.prev = g.price;
+    const drift = (Math.random()-0.5) * (g.base*0.004);
+    g.price = Math.max(g.base*0.9, g.price + drift);
+    const change = ((g.price - g.base)/g.base)*100;
+    document.getElementById("price-"+k).textContent = g.price.toFixed(2);
+    document.getElementById("time-"+k).textContent = fmtTime();
+    const trendEl = document.getElementById("trend-"+k);
+    const up = g.price >= g.prev;
+    trendEl.classList.toggle("up", up);
+    trendEl.classList.toggle("down", !up);
+    trendEl.innerHTML = '<span class="pulse-dot"></span> ' + (change>=0?"+":"") + change.toFixed(2) + "%";
+  });
+}
+tickGold();
+setInterval(tickGold, 4000);
+
+/* ================= GOLD CALCULATOR ================= */
+const gcTax = document.getElementById("gc-tax");
+const gcMake = document.getElementById("gc-make");
+gcTax.addEventListener("input", ()=> document.getElementById("gc-tax-val").textContent = gcTax.value);
+gcMake.addEventListener("input", ()=> document.getElementById("gc-make-val").textContent = gcMake.value);
+
+function calcGold(){
+  const market = document.getElementById("gc-market").value;
+  const karat = parseFloat(document.getElementById("gc-karat").value);
+  const weight = parseFloat(document.getElementById("gc-weight").value) || 0;
+  const tax = parseFloat(gcTax.value)/100;
+  const make = parseFloat(gcMake.value)/100;
+  const pricePerGram = gold[market].price * karat;
+  const base = pricePerGram * weight;
+  const withMaking = base * (1+make);
+  const total = withMaking * (1+tax);
+  document.getElementById("gc-result").textContent = total.toLocaleString(undefined,{maximumFractionDigits:2}) + " " + gold[market].currency;
+}
+
+/* ================= ZAKAT CALCULATOR ================= */
+function calcZakat(){
+  const market = document.getElementById("zc-market").value;
+  const grams = parseFloat(document.getElementById("zc-grams").value) || 0;
+  const nisab = 85;
+  const dict = translations[localStorage_lang] || translations.ar;
+  const resEl = document.getElementById("zc-result");
+  if(grams < nisab){
+    resEl.textContent = dict.zakat_not_due;
+    return;
+  }
+  const value = grams * gold[market].price;
+  const zakat = value * 0.025;
+  resEl.textContent = zakat.toLocaleString(undefined,{maximumFractionDigits:2}) + " " + gold[market].currency;
+}
+
+/* ================= CRYPTO CALCULATOR ================= */
+let cryptoPrices = { // base USD prices, simulated live drift
+  BTC:65000, ETH:3400, USDT:1, BNB:580, SOL:150, XRP:0.55,
+  USDC:1, ADA:0.45, DOGE:0.12, TON:5.5, TRX:0.12, LINK:14
+};
+const fxRates = { // relative to USD
+  USD:1, EUR:0.92, AED:3.6725, SAR:3.75, EGP:50, INR:83.5, QAR:3.64, OMR:0.3845, BHD:0.376, KWD:0.307
+};
+
+function tickCrypto(){
+  Object.keys(cryptoPrices).forEach(c=>{
+    const drift = (Math.random()-0.5) * (cryptoPrices[c]*0.006);
+    cryptoPrices[c] = Math.max(cryptoPrices[c]*0.5, cryptoPrices[c] + drift);
+  });
+}
+setInterval(tickCrypto, 5000);
+
+function calcCrypto(){
+  const coin = document.getElementById("cc-coin").value;
+  const amount = parseFloat(document.getElementById("cc-amount").value) || 0;
+  const currency = document.getElementById("cc-currency").value;
+  const usdValue = cryptoPrices[coin] * amount;
+  const converted = usdValue * fxRates[currency];
+  document.getElementById("cc-result").textContent = converted.toLocaleString(undefined,{maximumFractionDigits:2}) + " " + currency;
+}
+
+/* init */
+applyLang("ar");
+calcGold();
+calcCrypto();
 </script>
 </body>
 </html>
