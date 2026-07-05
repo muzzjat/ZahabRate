@@ -118,6 +118,26 @@
         document.getElementById('finalPrice').innerText = result.toFixed(2) + " AED";
     }
     calc();
+    <script>
+    // تأكد من وجود هذه المصفوفة وتفعيلها عند تحميل الصفحة
+    const cryptoData = [
+        {name:"Bitcoin", val:65000}, {name:"Ethereum", val:3500}, 
+        {name:"USDT", val:1}, {name:"XRP", val:0.5}, 
+        {name:"Solana", val:150}, {name:"BNB", val:500}, 
+        {name:"Dogecoin", val:0.1}, {name:"Cardano", val:0.4}
+    ];
+
+    const cryptoSelect = document.getElementById('cryptoSelect');
+    
+    // مسح أي خيارات قديمة ثم إضافة الجديدة
+    cryptoSelect.innerHTML = ""; 
+    cryptoData.forEach(c => {
+        let opt = document.createElement("option");
+        opt.value = c.val;
+        opt.text = c.name;
+        cryptoSelect.add(opt);
+    });
+</script>
 </script>
 </body>
 </html>
