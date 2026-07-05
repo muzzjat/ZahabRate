@@ -4,43 +4,79 @@
     <meta charset="UTF-8">
     <title>ZAHAB RATE Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #333333; color: #FFFDD0; display: flex; margin: 0; padding: 20px; }
-        
-        .sidebar { width: 220px; padding: 20px; background: #212121; border-radius: 15px; margin-left: 20px; height: fit-content; }
-        .sidebar a { display: block; color: #FFFDD0; text-decoration: none; margin-bottom: 20px; font-size: 1.1em; border-bottom: 1px solid #444; padding-bottom: 5px; }
-        
-        .main-content { flex: 1; }
-        
-        .calculator-screen { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; color: #0f0; font-family: 'Courier New', monospace; font-size: 1.8em; font-weight: bold; border: 2px solid #555; }
+        body { font-family: sans-serif; background: #1a1a1a; padding: 20px; color: #FFFDD0; }
+        .time-bar { display: flex; justify-content: space-around; background: #212121; border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; color: #FFFDD0; }
+        .time-box span { display: block; font-size: 1.2em; font-weight: bold; color: #f5e1a2; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { padding: 20px; border-radius: 15px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .gold-market { background: #d4af37; color: black; } 
+        .gold-calc { background: #2c3e50; } 
+        .crypto { background: #27ae60; }
+        .zakat { background: #c0392b; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        select, input { width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 5px; color: black; }
+
+        /* تنسيق الآلة الحاسبة الجديد */
+        .calc-screen { background: #000; color: #00ff00; padding: 15px; font-family: 'Courier New', monospace; font-size: 1.5em; text-align: center; border-radius: 8px; margin-bottom: 15px; border: 2px inset #555; }
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        .gold-calc { background: #2c3e50; padding: 20px; border-radius: 15px; color: white; margin-bottom: 20px; }
-        select, input { width: 100%; padding: 12px; border-radius: 5px; border: none; margin-bottom: 5px; color: black; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <a href="#">من نحن</a>
-    <a href="#">سياسة الخصوصية</a>
-    <a href="#">إخلاء المسؤولية</a>
-    <a href="#">اتصل بنا</a>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <a href="#"><img src="logo.png.png" alt="Logo" style="height: 80px; width: auto;"></a>
+    <select id="lang" onchange="changeLanguage()" style="width:200px; color: black;">
+        <option value="ar">🇸🇦 العربية</option><option value="en">🇺🇸 English</option>
+        <option value="fr">🇫🇷 Français</option><option value="es">🇪🇸 Español</option>
+        <option value="de">🇩🇪 Deutsch</option><option value="it">🇮🇹 Italiano</option>
+        <option value="pt">🇵🇹 Português</option><option value="ru">🇷🇺 Русский</option>
+        <option value="zh">🇨🇳 中文</option><option value="hi">🇮🇳 हिन्दी</option>
+        <option value="ur">🇵🇰 اردو</option><option value="fil">🇵🇭 Filipino</option>
+        <option value="tr">🇹🇷 Türkçe</option><option value="uk">🇺🇦 Українська</option>
+    </select>
 </div>
 
-<div class="main-content">
+<div class="time-bar">
+    <div class="time-box"><span data-i18n="dubai">دبي (Dubai)</span><span id="time-dubai">--:--:--</span></div>
+    <div class="time-box"><span data-i18n="london">لندن (London)</span><span id="time-london">--:--:--</span></div>
+    <div class="time-box"><span data-i18n="ny">نيويورك (NY)</span><span id="time-ny">--:--:--</span></div>
+</div>
+
+<div class="grid">
+    <div class="card gold-market">
+        <h2 data-i18n="gold_market">سوق الذهب دبي</h2>
+        <table><tr><th>24K</th><th>22K</th><th>21K</th><th>18K</th></tr><tr><td>325.00</td><td>302.00</td><td>288.00</td><td>248.00</td></tr></table>
+    </div>
+
     <div class="card gold-calc">
         <h2 data-i18n="gold_calc">حاسبة الذهب</h2>
-        <div class="calculator-screen" id="finalPrice">0.00 AED</div>
-        
+        <div class="calc-screen" id="finalPrice">0.00 AED</div>
         <div class="calc-grid">
             <select id="kSelect" onchange="calc()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select>
-            <input type="number" id="grams" value="1" placeholder="الوزن" oninput="calc()">
+            <input type="number" id="grams" value="1" data-i18n-placeholder="weight" placeholder="الوزن" oninput="calc()">
             <select id="labor" onchange="calc()"></select>
             <select id="tax" onchange="calc()"></select>
         </div>
     </div>
-</div>
 
+    <div class="card crypto">
+        <h2 data-i18n="crypto_calc">حاسبة العملات الرقمية</h2>
+        <input type="number" id="cryptoAmount" data-i18n-placeholder="amount" placeholder="الكمية" oninput="calcCrypto()">
+        <select id="cryptoSelect" onchange="calcCrypto()"></select>
+        <select id="currencyTarget" onchange="calcCrypto()">
+            <option value="1">USD / USDT</option><option value="3.67">AED</option><option value="3.75">SAR</option>
+            <option value="0.92">EUR</option><option value="48.5">EGP</option><option value="83.5">INR</option><option value="56.5">PHP</option>
+        </select>
+        <h3 id="cryptoResult" data-i18n="value">القيمة: 0.00</h3>
+    </div>
+    <div class="card zakat">
+        <h2 data-i18n="zakat_calc">حاسبة زكاة الذهب</h2>
+        <select id="zakatKarat" onchange="calcZakat()"><option value="24">24K</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option></select>
+        <input type="number" id="zakatGrams" data-i18n-placeholder="zakat_weight" placeholder="الوزن بالجرام" oninput="calcZakat()">
+        <h3 id="zakatResult" data-i18n="zakat_due">مبلغ الزكاة: 0.00</h3>
+    </div>
+</div>
 <script>
     const labor = document.getElementById('labor');
     const tax = document.getElementById('tax');
