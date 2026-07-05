@@ -60,15 +60,22 @@
         </div>
     </div>
 
-    <div class="card crypto">
-        <h2 data-i18n="crypto_calc">حاسبة العملات الرقمية</h2>
+<div class="card crypto">
+    <h2 data-i18n="crypto_calc">حاسبة العملات الرقمية</h2>
+    
+    <div class="calc-screen" id="cryptoResult" style="background: #000; color: #00ff00; padding: 15px; font-family: 'Courier New', monospace; font-size: 1.4em; text-align: center; border-radius: 8px; margin-bottom: 15px; border: 2px inset #555; font-weight: bold;">
+        القيمة: 0.00
+    </div>
+    
+    <div class="calc-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
         <input type="number" id="cryptoAmount" data-i18n-placeholder="amount" placeholder="الكمية" oninput="calcCrypto()">
         <select id="cryptoSelect" onchange="calcCrypto()"></select>
-        <select id="currencyTarget" onchange="calcCrypto()">
+        <select id="currencyTarget" onchange="calcCrypto()" style="grid-column: span 2;">
             <option value="1">USD / USDT</option><option value="3.67">AED</option><option value="3.75">SAR</option>
             <option value="0.92">EUR</option><option value="48.5">EGP</option><option value="83.5">INR</option><option value="56.5">PHP</option>
         </select>
-        <h3 id="cryptoResult" data-i18n="value">القيمة: 0.00</h3>
+    </div>
+</div>        <h3 id="cryptoResult" data-i18n="value">القيمة: 0.00</h3>
     </div>
 <div class="card zakat">
     <h2 data-i18n="zakat_calc">حاسبة زكاة الذهب</h2>
