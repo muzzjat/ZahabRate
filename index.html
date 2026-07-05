@@ -38,9 +38,9 @@
     </div>
 
     <div class="time-bar">
-        <div>دبي<span id="time-dubai" style="display:block;">--:--:--</span></div>
-        <div>لندن<span id="time-london" style="display:block;">--:--:--</span></div>
-        <div>نيويورك<span id="time-ny" style="display:block;">--:--:--</span></div>
+        <div><span data-i18n="dubai">دبي</span><span id="time-dubai" style="display:block;">--:--:--</span></div>
+        <div><span data-i18n="london">لندن</span><span id="time-london" style="display:block;">--:--:--</span></div>
+        <div><span data-i18n="ny">نيويورك</span><span id="time-ny" style="display:block;">--:--:--</span></div>
     </div>
 
     <div class="grid">
@@ -53,10 +53,7 @@
             <h2 data-i18n="gold_calc">حاسبة الذهب</h2>
             <div class="calc-screen" id="finalPrice">0.00 AED</div>
             <div class="calc-grid">
-                <select id="kSelect" onchange="calc()">
-                    <option value="325">24K</option><option value="302">22K</option>
-                    <option value="288">21K</option><option value="248">18K</option><option value="190">14K</option>
-                </select>
+                <select id="kSelect" onchange="calc()"><option value="325">24K</option><option value="302">22K</option><option value="288">21K</option><option value="248">18K</option><option value="190">14K</option></select>
                 <input type="number" id="grams" data-i18n-placeholder="weight" placeholder="الوزن" oninput="calc()">
                 <select id="labor" onchange="calc()"></select><select id="tax" onchange="calc()"></select>
             </div>
@@ -89,22 +86,23 @@
 
 <script>
     const tr = {
-        ar: { gold_market: 'أسعار الذهب تجزئة "دبى"', gold_calc: 'حاسبة الذهب', crypto_calc: 'حاسبة العملات الرقمية', zakat_calc: 'حاسبة زكاة الذهب', weight: 'الوزن', coin_count: 'عدد العملة', about: 'من نحن', privacy: 'سياسة الخصوصية', disclaimer: 'إخلاء المسؤولية', contact: 'اتصل بنا' },
-        en: { gold_market: 'Gold Price Retail "Dubai"', gold_calc: 'Gold Calculator', crypto_calc: 'Crypto Calculator', zakat_calc: 'Zakat Calculator', weight: 'Weight', coin_count: 'Coin Count', about: 'About Us', privacy: 'Privacy Policy', disclaimer: 'Disclaimer', contact: 'Contact Us' }
+        ar: { gold_market: 'أسعار الذهب تجزئة "دبى"', gold_calc: 'حاسبة الذهب', crypto_calc: 'حاسبة العملات الرقمية', zakat_calc: 'حاسبة زكاة الذهب', weight: 'الوزن', coin_count: 'عدد العملة', about: 'من نحن', privacy: 'سياسة الخصوصية', disclaimer: 'إخلاء المسؤولية', contact: 'اتصل بنا', dubai: 'دبي', london: 'لندن', ny: 'نيويورك' },
+        en: { gold_market: 'Gold Price Retail "Dubai"', gold_calc: 'Gold Calculator', crypto_calc: 'Crypto Calculator', zakat_calc: 'Zakat Calculator', weight: 'Weight', coin_count: 'Coin Count', about: 'About Us', privacy: 'Privacy Policy', disclaimer: 'Disclaimer', contact: 'Contact Us', dubai: 'Dubai', london: 'London', ny: 'New York' }
     };
 
     function changeLang() {
         const l = document.getElementById('lang').value;
-        document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = tr[l][el.dataset.i18n] || el.innerText);
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder = tr[l][el.dataset.i18n_placeholder] || el.placeholder);
+        document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = tr[l][el.dataset.i18n]);
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder = tr[l][el.dataset.i18n_placeholder]);
     }
 
-    // تعبئة البيانات
-    const coins = [{name:"Bitcoin",val:65000}, {name:"Ethereum",val:3500}, {name:"USDT",val:1}, {name:"XRP",val:0.5}, {name:"Solana",val:150}, {name:"BNB",val:500}, {name:"Dogecoin",val:0.1}, {name:"Cardano",val:0.4}, {name:"Shiba",val:0.00002}, {name:"Avalanche",val:30}];
+    // تهيئة القوائم
+    const coins = [{name:"Bitcoin",val:65000}, {name:"Ethereum",val:3500}, {name:"USDT",val:1}, {name:"XRP",val:0.5}, {name:"Solana",val:150}, {name:"BNB",val:500}, {name:"Dogecoin",val:0.1}, {name:"Cardano",val:0.4}];
     coins.forEach(c => document.getElementById('cryptoSelect').innerHTML += `<option value="${c.val}">${c.name}</option>`);
     for(let i=0; i<=70; i+=5) document.getElementById('labor').innerHTML += `<option value="${i/100}">${i}% مصنعية</option>`;
     for(let i=0; i<=50; i+=5) document.getElementById('tax').innerHTML += `<option value="${i/100}">${i}% ضريبة</option>`;
 
+    // الدوال
     function calc() {
         let p = parseFloat(document.getElementById('kSelect').value);
         let g = parseFloat(document.getElementById('grams').value) || 0;
