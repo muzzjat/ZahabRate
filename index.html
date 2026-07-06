@@ -1779,22 +1779,22 @@ const TRANSLATE_STATUS_LABELS = {
 
 function captureOriginalArticles(){
   if(articlesOriginalCaptured) return;
-  document.querySelectorAll('.article-body').forEach(body=>{
+  document.querySelectorAll('.article-card').forEach(card=>{
     const items = [];
-    body.querySelectorAll('h4, p').forEach(el=>{
-      items.push({tag: el.tagName, text: el.textContent});
+    card.querySelectorAll('h3, h4, p').forEach(el=>{
+      items.push({text: el.textContent});
     });
-    articlesOriginalText[body.id] = items;
+    articlesOriginalText[card.id] = items;
   });
   articlesOriginalCaptured = true;
 }
 
 function restoreOriginalArticles(){
-  Object.keys(articlesOriginalText).forEach(bodyId=>{
-    const body = document.getElementById(bodyId);
-    if(!body) return;
-    const els = body.querySelectorAll('h4, p');
-    const items = articlesOriginalText[bodyId];
+  Object.keys(articlesOriginalText).forEach(cardId=>{
+    const card = document.getElementById(cardId);
+    if(!card) return;
+    const els = card.querySelectorAll('h3, h4, p');
+    const items = articlesOriginalText[cardId];
     els.forEach((el, i)=>{ if(items[i]) el.textContent = items[i].text; });
   });
 }
@@ -1883,14 +1883,14 @@ async function translateArticles(lang){
   statusEl.style.display = 'flex';
   statusEl.innerHTML = '<span class="translate-spinner"></span><span>' + (TRANSLATE_STATUS_LABELS[lang] || 'Translating…') + '</span>';
 
-  const bodies = Object.keys(articlesOriginalText);
+  const cards = Object.keys(articlesOriginalText);
   const jobs = [];
-  const targets = []; // {bodyId, index}
+  const targets = []; // {cardId, index}
 
-  bodies.forEach(bodyId=>{
-    articlesOriginalText[bodyId].forEach((item, idx)=>{
+  cards.forEach(cardId=>{
+    articlesOriginalText[cardId].forEach((item, idx)=>{
       jobs.push(()=> translateOne(item.text, lang));
-      targets.push({bodyId, idx});
+      targets.push({cardId, idx});
     });
   });
 
@@ -1899,9 +1899,9 @@ async function translateArticles(lang){
   if(myToken !== translateRunToken) return; // a newer language switch superseded this run
 
   targets.forEach((t, i)=>{
-    const body = document.getElementById(t.bodyId);
-    if(!body) return;
-    const els = body.querySelectorAll('h4, p');
+    const card = document.getElementById(t.cardId);
+    if(!card) return;
+    const els = card.querySelectorAll('h3, h4, p');
     if(els[t.idx]) els[t.idx].textContent = results[i];
   });
 
