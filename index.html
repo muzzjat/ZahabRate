@@ -425,6 +425,13 @@
   }
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  /* Hide Google Website Translator's default UI so our own design stays intact */
+  body{ top:0 !important; position:static !important; }
+  .goog-te-banner-frame.skiptranslate{ display:none !important; }
+  .goog-tooltip, .goog-tooltip:hover{ display:none !important; }
+  .goog-text-highlight{ background:none !important; box-shadow:none !important; border:none !important; }
+  #google_translate_element{ display:none !important; }
+
   @media (max-width:980px){
     .screens, .calc-grid, .services-grid{grid-template-columns:1fr;}
     nav.mainnav{display:none;position:absolute;top:100%;inset-inline:0;background:var(--navy-deep);
@@ -652,7 +659,7 @@
 </section>
 
 <!-- GOLD FACTS WHEEL -->
-<section id="wheel-info">
+<section id="wheel-info" class="notranslate" translate="no">
   <div class="screens-title" id="wheelTitleText">عجلة معلومات الذهب</div>
   <div class="section-sub" id="wheelSubText">أدر العجلة واكتشف حقيقة ذهبية جديدة في كل مرة</div>
   <div class="wheel-flex">
@@ -1748,164 +1755,55 @@ es:{title:"Rueda de Datos sobre el Oro",sub:"Gira la rueda para descubrir un nue
 const rtlLangs = ["ar","ur"];
 
 function applyLang(lang){
-  const dict = translations[lang] || translations.ar;
-  document.querySelectorAll("[data-i18n]").forEach(el=>{
-    const key = el.getAttribute("data-i18n");
-    if(dict[key] !== undefined) el.textContent = dict[key];
-  });
   const dir = rtlLangs.includes(lang) ? "rtl" : "ltr";
   document.documentElement.setAttribute("lang", lang);
   document.documentElement.setAttribute("dir", dir);
   document.body.setAttribute("data-dir", dir);
   localStorage_lang = lang; // in-memory only, no browser storage used persistently across sessions
-  applyWheelLang(lang);
-  translateArticles(lang);
+  applyWheelLang(lang); // wheel is marked notranslate and stays on its own manual dictionary
+  triggerGoogleTranslate(lang); // everything else (nav, hero, screens, calculators, all 19 articles, legal, footer) is translated by Google's own widget
 }
 let localStorage_lang = "ar";
 
-/* ================= AUTO-TRANSLATE ARTICLES ================= */
-// Captures the original Arabic text once, then live-translates the
-// article headings/paragraphs whenever the visitor switches language.
-// Uses the browser's own network call (client-side), so it works once the
-// site is deployed on a real domain. Results are cached in localStorage
-// so each sentence is only translated once per language, ever.
-let articlesOriginalCaptured = false;
-const articlesOriginalText = {}; // { "article-1-body": [ {tag, text}, ... ] }
-const TRANSLATE_STATUS_LABELS = {
-  ar:"", en:"Translating articles…", fr:"Traduction des articles…", ru:"Перевод статей…",
-  hi:"लेख अनुवादित हो रहे हैं…", ur:"مضامین ترجمہ ہو رہے ہیں…", zh:"正在翻译文章…",
-  uk:"Переклад статей…", tl:"Isinasalin ang mga artikulo…", es:"Traduciendo artículos…"
-};
-
-function captureOriginalArticles(){
-  if(articlesOriginalCaptured) return;
-  document.querySelectorAll('.article-card').forEach(card=>{
-    const items = [];
-    card.querySelectorAll('h3, h4, p').forEach(el=>{
-      items.push({text: el.textContent});
-    });
-    articlesOriginalText[card.id] = items;
-  });
-  articlesOriginalCaptured = true;
+/* ================= GOOGLE WEBSITE TRANSLATOR ================= */
+// Official Google Translate Website widget. Runs as a <script> include (not a
+// fetch() call), so it isn't subject to the CORS/quota issues that broke the
+// previous custom translation engine. It scans and translates the entire
+// page — including every article — the moment a target language is selected.
+// The #wheel-info section is marked class="notranslate" so Google leaves it
+// alone; the wheel keeps using its own small hand-written dictionary instead.
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage: 'ar',
+    includedLanguages: 'en,fr,ru,hi,ur,uk,tl,es',
+    autoDisplay: false
+  }, 'google_translate_element');
 }
 
-function restoreOriginalArticles(){
-  Object.keys(articlesOriginalText).forEach(cardId=>{
-    const card = document.getElementById(cardId);
-    if(!card) return;
-    const els = card.querySelectorAll('h3, h4, p');
-    const items = articlesOriginalText[cardId];
-    els.forEach((el, i)=>{ if(items[i]) el.textContent = items[i].text; });
-  });
-}
+let googleTranslateActive = false;
 
-function splitIntoChunks(text, maxLen){
-  if(text.length <= maxLen) return [text];
-  const sentences = text.split(/(?<=[.!؟?])\s+/);
-  const chunks = [];
-  let current = "";
-  sentences.forEach(s=>{
-    if((current + " " + s).trim().length > maxLen){
-      if(current) chunks.push(current.trim());
-      current = s;
-    } else {
-      current = (current + " " + s).trim();
-    }
-  });
-  if(current) chunks.push(current.trim());
-  const safeChunks = [];
-  chunks.forEach(c=>{
-    if(c.length <= maxLen) safeChunks.push(c);
-    else{
-      for(let i=0;i<c.length;i+=maxLen) safeChunks.push(c.slice(i, i+maxLen));
-    }
-  });
-  return safeChunks;
-}
-
-async function translateOne(text, targetLang){
-  const cacheKey = 'zr_translate:' + targetLang + ':' + text;
-  try{
-    const cached = localStorage.getItem(cacheKey);
-    if(cached) return cached;
-  }catch(e){ /* localStorage unavailable, continue without cache */ }
-
-  const chunks = splitIntoChunks(text, 480); // MyMemory's practical per-request limit
-  try{
-    const translatedChunks = [];
-    for(const chunk of chunks){
-      const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunk)
-        + '&langpair=ar|' + encodeURIComponent(targetLang);
-      const res = await fetch(url);
-      const data = await res.json();
-      if(data && data.responseData && data.responseData.translatedText && data.responseStatus === 200){
-        translatedChunks.push(data.responseData.translatedText);
-      } else {
-        translatedChunks.push(chunk); // quota hit or bad response: keep this piece as-is
-      }
-    }
-    const translated = translatedChunks.join(' ');
-    try{ localStorage.setItem(cacheKey, translated); }catch(e){}
-    return translated;
-  }catch(e){
-    return text; // network failure: fall back to original Arabic
-  }
-}
-
-// Runs a list of async jobs with a concurrency cap so we don't fire
-// hundreds of simultaneous requests at once.
-async function runWithConcurrency(jobs, limit){
-  const results = new Array(jobs.length);
-  let next = 0;
-  async function worker(){
-    while(next < jobs.length){
-      const i = next++;
-      results[i] = await jobs[i]();
-    }
-  }
-  const workers = Array.from({length: Math.min(limit, jobs.length)}, worker);
-  await Promise.all(workers);
-  return results;
-}
-
-let translateRunToken = 0;
-async function translateArticles(lang){
-  captureOriginalArticles();
-  const statusEl = document.getElementById('translateStatus');
-
+function triggerGoogleTranslate(lang){
   if(lang === 'ar'){
-    restoreOriginalArticles();
-    statusEl.style.display = 'none';
+    if(googleTranslateActive){
+      // Returning to the original language requires clearing Google's
+      // translation cookie and reloading — there is no clean JS-only revert.
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname + ';';
+      location.reload();
+    }
     return;
   }
-
-  const myToken = ++translateRunToken;
-  statusEl.style.display = 'flex';
-  statusEl.innerHTML = '<span class="translate-spinner"></span><span>' + (TRANSLATE_STATUS_LABELS[lang] || 'Translating…') + '</span>';
-
-  const cards = Object.keys(articlesOriginalText);
-  const jobs = [];
-  const targets = []; // {cardId, index}
-
-  cards.forEach(cardId=>{
-    articlesOriginalText[cardId].forEach((item, idx)=>{
-      jobs.push(()=> translateOne(item.text, lang));
-      targets.push({cardId, idx});
-    });
-  });
-
-  const results = await runWithConcurrency(jobs, 6);
-
-  if(myToken !== translateRunToken) return; // a newer language switch superseded this run
-
-  targets.forEach((t, i)=>{
-    const card = document.getElementById(t.cardId);
-    if(!card) return;
-    const els = card.querySelectorAll('h3, h4, p');
-    if(els[t.idx]) els[t.idx].textContent = results[i];
-  });
-
-  statusEl.style.display = 'none';
+  const tryTrigger = (attemptsLeft)=>{
+    const combo = document.querySelector('.goog-te-combo');
+    if(combo){
+      combo.value = lang;
+      combo.dispatchEvent(new Event('change'));
+      googleTranslateActive = true;
+    } else if(attemptsLeft > 0){
+      setTimeout(()=> tryTrigger(attemptsLeft - 1), 400); // widget script may still be loading
+    }
+  };
+  tryTrigger(15); // retry for up to ~6 seconds
 }
 
 function applyWheelLang(lang){
@@ -2086,5 +1984,7 @@ applyLang("ar");
 calcGold();
 calcCrypto();
 </script>
+<div id="google_translate_element" style="display:none;"></div>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
 </body>
 </html>
